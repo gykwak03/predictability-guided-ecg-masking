@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+.venv/
+.ipynb_checkpoints/
+
+# Generated PTB-XL arrays are multi-gigabyte local artifacts.
+preprocessing/artifacts/
+experiments/artifacts/
