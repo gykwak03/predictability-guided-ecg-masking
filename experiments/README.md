@@ -1,5 +1,59 @@
 # Mask 단위 확정 pilot
 
+## 기본 ECG-MAE의 초기화와 결과 보관 (2026-10-13 점검)
+
+`PlainECGMAE`는 기존 global random mask, encoder/decoder 크기, learned lead/time
+embedding, masked-only MSE, optimizer와 pooling을 유지합니다. 새 실행의 기본
+`--initialization independent`는 Transformer block의 attention/Linear 가중치만
+층별 Xavier로 다시 초기화하여 PyTorch가 복제한 층의 초기값이 모두 같은 문제를 정리합니다.
+Embedding과 reconstruction head는 기존 초기화를 유지합니다. 이 수정이 일반화 성능을
+개선했다고 주장하지 않습니다. `--initialization legacy`로 이전 방식과 대조할 수 있습니다.
+설정은 `profile.initialization`에 저장합니다. 해당 키가 없는 과거 checkpoint는
+legacy로 복원하며, 초기화 설정이 다른 실행을 같은 seed 비교로 합산하지 않습니다.
+
+실제 pilot 크기(encoder 192차원/6층, decoder 128차원/2층)의 모델을 CPU에서도
+train ECG 2개·고정 mask·constant LR로 검사할 수 있습니다. 일반 pilot 학습의 CUDA
+요구는 그대로이며 `--allow-cpu-tiny-overfit`은 이 진단에만 적용됩니다.
+
+```bash
+python -u run_masking_pilot.py --mode pilot --tiny-overfit --tiny-steps 1000 \
+  --allow-cpu-tiny-overfit --initialization independent \
+  --patch-samples 50 --mask-ratio 0.75 --subset-seed 42 --eval-mask-seed 42 \
+  --artifact-dir /data/gykwak03/capstone2/ptbxl_250hz \
+  --output-root /data/gykwak03/capstone2/results/plain_model_audit/independent
+```
+
+같은 명령에서 `--initialization legacy` 및 별도 output root로 이전 초기화와 비교합니다.
+GPU 할당 노드에서는 CPU 허용 옵션 없이 실행할 수 있습니다. Tiny-overfit은 학습
+ECG의 memorization 검사이며 validation/test/probe 성능의 근거가 아닙니다.
+`summary.json`, `initialization.json`, 학습 곡선, initial/final 복원 예시를 저장합니다.
+
+로컬 CPU에서 ECG ID 11/22, patch 50·mask 75%, seed 42, 1,000 update를 맞춰
+실행한 결과는 다음과 같습니다. 실제 target 및 mask 배열도 동일함을 확인했습니다.
+
+| 초기화 | 초기 masked MSE | 최종 masked MSE | 최종 예측/정답 RMS | 최종 상관계수 |
+| --- | --- | --- | --- | --- |
+| legacy | 1.263233 | 0.004770 | 0.992250 | 0.997599 |
+| independent | 1.248040 | 0.004772 | 0.996716 | 0.997586 |
+
+두 방식 모두 2개 ECG를 거의 외웠습니다. 따라서 이 검사에서 초기화가 기존 pilot 부진의
+주원인이라는 근거는 나오지 않았으며, 수정 전 모델도 복원 과제를 학습할 능력이 있습니다.
+새 초기화의 random-mask pilot 및 downstream 개선은 GPU에서 별도로 확인해야 합니다.
+측정 원본은 `artifacts/model_audit_20261013/initialization_comparison.csv`,
+`audit_report.json`, `initialization_comparison_curves.png`에 있습니다.
+초기화·과거 checkpoint 호환성·9조건·결과 저장을 포함한 로컬 회귀 테스트는 79개 통과했습니다.
+
+Git은 `experiments/artifacts/`의 CSV·JSON·Markdown과 학습/진단/gradient/조건 비교
+곡선 PNG를 추적할 수 있습니다. Checkpoint, NPY/NPZ 파형·예측 배열, 복원 예시 PNG와
+`preprocessing/artifacts/`의 원본 전처리 데이터는 계속 제외합니다. 기존 기록도
+직접 add/commit/push해야 원격 저장소에 반영되며, ignore 변경은 서버 파일을 다운로드하지 않습니다.
+서버 명령의 `/data/gykwak03/capstone2/results/`는 clone 밖이므로 먼저 로컬 repository의
+`experiments/artifacts/`로 옮겨야 Git으로 관리할 수 있습니다.
+
+2026-10-13 로컬 확인 당시 기존 MAE의 9조건·3-seed·진단 결과는 있었지만,
+ST-MEM의 `st_mem_grid_v2` 9조건 결과 폴더는 없었습니다. 대화에 붙여 넣은 결과표만으로는
+전체 checkpoint/파형/설정 파일까지 내려받았다고 확인할 수 없습니다.
+
 ## ST-MEM 기본 모델 실행 (새 경로)
 
 `ST_MEM_pilot.ipynb`에 설명과 실행 셀이 있습니다. 서버에서는 `run_st_mem_pilot.py`를
@@ -211,7 +265,7 @@ Checkpoint는 자신이 생성한 신뢰할 수 있는 파일만 로드하세요
 | gradient가 끊기거나 가중치가 안 바뀌는지 | `gradient_updates.csv/png`: 1·50·100…·최종 update에 patch embed, encoder/decoder 각 층, positional parameters, reconstruction head 등의 clipping 전 gradient norm, grad 없는 parameter 수, 실제 update norm과 weight norm 대비 비율. `pretrain_history.csv`의 `clipped`는 전체 clipping 발생 여부. |
 | SSL 없이도 나온 분류 성능인지 | `initial_checkpoint.pt`, `random_encoder_probe_metrics.json`, `random_encoder_probe.pt`, `random_encoder_probabilities.npy`, `results.csv`의 `auroc_gain_vs_random`: **동일한 학습 전 가중치**를 가진 random encoder에 같은 subset/feature 표준화/probe seed/update로 대조 실험. 별도 RNG 보존으로 기존 학습을 교란하지 않음. |
 | 표현이 비슷한 상수로 붕괴하는지 | `feature_statistics.json`: probe train의 feature 차원별 std, near-constant 차원 수, centered covariance effective rank, ECG 간 평균 cosine. 작은 subset의 rank 한계에 유의; 단일 지표로 collapse 확정 불가. |
-| 초기 layer 값이 같은지 | `initialization.json`: encoder/decoder layer 초기값 동일 여부. PyTorch clone 초기화의 관찰이며 공유 parameter/버그/원인 확정이 아님. 비교를 위해 초기화는 변경 안 함. |
+| 초기 layer 값이 같은지 | `initialization.json`: encoder/decoder layer 초기값 동일 여부. 새 independent 실행은 층별 초기값을 분리하며 legacy 실행은 과거 방식을 유지. 동일 초기값은 공유 parameter나 실패 원인의 확정이 아님. |
 
 최종 주 결과는 기존과 같은 validation 최대 128 ECG × 3 mask repeats입니다.
 **mask seed뿐 아니라 RNG 값의 argsort 방식까지 기존 평가와 일치**하도록 했습니다.

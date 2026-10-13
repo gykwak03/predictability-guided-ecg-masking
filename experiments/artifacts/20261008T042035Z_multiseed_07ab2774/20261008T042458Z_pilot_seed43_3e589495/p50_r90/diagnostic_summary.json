@@ -1,0 +1,110 @@
+{
+  "final_validation": {
+    "masked_samples": 10368000,
+    "masked_mse": 0.9959233658290768,
+    "zero_masked_mse": 0.9992699400364968,
+    "skill_vs_zero": 0.0033490191922492807,
+    "pred_rms": 0.05721081412560269,
+    "target_rms": 0.999634903370474,
+    "rms_ratio": 0.05723170922974448,
+    "pred_std": 0.05719180326735796,
+    "target_std": 0.9996349013434381,
+    "mean_bias": 0.001538411453424498,
+    "masked_correlation": 0.05789515826051515,
+    "linear_masked_mse": 0.7297280956253819,
+    "linear_skill_vs_zero": 0.26973876988761447
+  },
+  "random_encoder_probe": {
+    "macro_auroc": 0.7768189637177717,
+    "macro_auprc": 0.5503171538448963,
+    "macro_f1": 0.5508055788734316,
+    "valid_metric_classes": 5
+  },
+  "trained_encoder_probe": {
+    "macro_auroc": 0.7758027474928582,
+    "macro_auprc": 0.5525771160724118,
+    "macro_f1": 0.5485127825324116,
+    "valid_metric_classes": 5
+  },
+  "auroc_gain_vs_random": -0.0010162162249135465,
+  "clipping_fraction": 0.018,
+  "first_fixed_evaluation": [
+    {
+      "step": 0,
+      "split": "train",
+      "ecgs": 32,
+      "repeats": 1,
+      "masked_samples": 864000,
+      "masked_mse": 1.3116565559055573,
+      "zero_masked_mse": 1.0025941739725386,
+      "skill_vs_zero": -0.30826269487327385,
+      "pred_rms": 0.5580626190758597,
+      "target_rms": 1.0012962468583104,
+      "rms_ratio": 0.5573401686332586,
+      "pred_std": 0.5580403356527014,
+      "target_std": 1.0012962336589248,
+      "mean_bias": -0.005149624911271783,
+      "masked_correlation": 0.002123551104163368
+    },
+    {
+      "step": 0,
+      "split": "validation",
+      "ecgs": 32,
+      "repeats": 1,
+      "masked_samples": 864000,
+      "masked_mse": 1.3145287047669352,
+      "zero_masked_mse": 1.002489226192105,
+      "skill_vs_zero": -0.31126467040458206,
+      "pred_rms": 0.5584399715680062,
+      "target_rms": 1.0012438395276673,
+      "rms_ratio": 0.5577462247672335,
+      "pred_std": 0.5584033482183794,
+      "target_std": 1.001243727114917,
+      "mean_bias": -0.006869962083737885,
+      "masked_correlation": -0.00015937102920550645
+    }
+  ],
+  "last_fixed_evaluation": [
+    {
+      "step": 1000,
+      "split": "train",
+      "ecgs": 32,
+      "repeats": 1,
+      "masked_samples": 864000,
+      "masked_mse": 0.9960387920243733,
+      "zero_masked_mse": 1.0025941739725386,
+      "skill_vs_zero": 0.0065384201487938,
+      "pred_rms": 0.07928172892790984,
+      "target_rms": 1.0012962468583104,
+      "rms_ratio": 0.07917909327700566,
+      "pred_std": 0.07927035975383136,
+      "target_std": 1.0012962336589248,
+      "mean_bias": 0.0011800294868932251,
+      "masked_correlation": 0.08088720153194769
+    },
+    {
+      "step": 1000,
+      "split": "validation",
+      "ecgs": 32,
+      "repeats": 1,
+      "masked_samples": 864000,
+      "masked_mse": 0.9980323311008485,
+      "zero_masked_mse": 1.002489226192105,
+      "skill_vs_zero": 0.004445828418710995,
+      "pred_rms": 0.0585429083634384,
+      "target_rms": 1.0012438395276673,
+      "rms_ratio": 0.058470180841318116,
+      "pred_std": 0.05848768392900406,
+      "target_std": 1.001243727114917,
+      "mean_bias": 0.002067780472566074,
+      "masked_correlation": 0.06729591402263553
+    }
+  ],
+  "observations": [
+    "Less than 5% MSE reduction versus zero prediction: reconstruction learning is weak.",
+    "Masked prediction RMS is below 20% of target: check near-zero or amplitude-shrunken outputs.",
+    "Train-fitted same-time cross-lead baseline is substantially better; inspect lead/time alignment and model learning capacity. This is not proof of a specific cause.",
+    "AUROC gain over the matched random encoder is below 0.01; SSL benefit is not established by this one-seed run."
+  ],
+  "caveat": "Thresholds are debugging heuristics, not causal findings. Diagnose with curves, waveforms, tiny overfit and controlled longer/multi-seed runs."
+}

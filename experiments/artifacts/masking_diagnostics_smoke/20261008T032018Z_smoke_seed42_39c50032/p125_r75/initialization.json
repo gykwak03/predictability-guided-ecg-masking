@@ -1,0 +1,5 @@
+{
+  "encoder_layers_identical_at_initialization": null,
+  "decoder_layers_identical_at_initialization": null,
+  "note": "Identical initial values are not shared parameters or a proven cause. No initialization was changed."
+}

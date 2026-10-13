@@ -1,0 +1,556 @@
+{
+  "mode": "smoke",
+  "seed": 42,
+  "device": "cpu",
+  "versions": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "matplotlib": "3.11.2",
+    "torch": "2.14.1+cpu",
+    "scikit-learn": "1.9.1"
+  },
+  "profile": {
+    "train_n": 64,
+    "val_n": 32,
+    "batch": 4,
+    "steps": 8,
+    "eval_n": 16,
+    "probe_steps": 8,
+    "probe_batch": 16,
+    "enc_dim": 32,
+    "enc_depth": 1,
+    "enc_heads": 4,
+    "dec_dim": 32,
+    "dec_depth": 1,
+    "dec_heads": 4
+  },
+  "grid": [
+    [
+      125,
+      0.75
+    ]
+  ],
+  "class_order": [
+    "NORM",
+    "MI",
+    "STTC",
+    "CD",
+    "HYP"
+  ],
+  "lead_order": [
+    "I",
+    "II",
+    "III",
+    "aVR",
+    "aVL",
+    "aVF",
+    "V1",
+    "V2",
+    "V3",
+    "V4",
+    "V5",
+    "V6"
+  ],
+  "source_manifest_sha256": "47d6a05598767244e6b24ee7b27410b5ebbc26875fcbd57ea5d7a4bc7e182bba",
+  "source_preprocessing": {
+    "data_dir": "C:\\Users\\gykwa\\kyunghee2026\\capstonedesign2\\ptb-xl\\ptb-xl",
+    "output_dir": "C:\\Users\\gykwa\\kyunghee2026\\capstonedesign2\\predictability-guided-ecg-masking\\preprocessing\\artifacts\\ptbxl_250hz",
+    "source_sampling_rate": 500,
+    "target_sampling_rate": 250,
+    "bandpass_low": 0.67,
+    "bandpass_high": 40.0,
+    "filter_order": 4,
+    "normalization": "per-record",
+    "epsilon": 1e-06,
+    "drop_unlabeled": false,
+    "min_likelihood": null,
+    "limit_per_split": null,
+    "near_flat_std_mv": 0.0001,
+    "near_flat_range_mv": 0.001,
+    "extreme_amplitude_mv": 20.0,
+    "progress_every": 500,
+    "overwrite": false,
+    "validate_after_build": true
+  },
+  "source_manifest": {
+    "schema_version": 1,
+    "generated_at_utc": "2026-10-04T18:42:20.872067+00:00",
+    "dataset": "PTB-XL",
+    "dataset_version": "1.0.3",
+    "source": {
+      "data_dir": "C:\\Users\\gykwa\\kyunghee2026\\capstonedesign2\\ptb-xl\\ptb-xl",
+      "ptbxl_database_sha256": "7600de9c1b27d181d850b3c6038a35d7c3ddb6bb33b702e3a20252a6859d216b",
+      "scp_statements_sha256": "ad05b0b1fcae83bb1230755ad9cfc7c96f303feddc08a4a9ad5bdc9ca63bac8f"
+    },
+    "config": {
+      "data_dir": "C:\\Users\\gykwa\\kyunghee2026\\capstonedesign2\\ptb-xl\\ptb-xl",
+      "output_dir": "C:\\Users\\gykwa\\kyunghee2026\\capstonedesign2\\predictability-guided-ecg-masking\\preprocessing\\artifacts\\ptbxl_250hz",
+      "source_sampling_rate": 500,
+      "target_sampling_rate": 250,
+      "bandpass_low": 0.67,
+      "bandpass_high": 40.0,
+      "filter_order": 4,
+      "normalization": "per-record",
+      "epsilon": 1e-06,
+      "drop_unlabeled": false,
+      "min_likelihood": null,
+      "limit_per_split": null,
+      "near_flat_std_mv": 0.0001,
+      "near_flat_range_mv": 0.001,
+      "extreme_amplitude_mv": 20.0,
+      "progress_every": 500,
+      "overwrite": false,
+      "validate_after_build": true
+    },
+    "lead_order": [
+      "I",
+      "II",
+      "III",
+      "aVR",
+      "aVL",
+      "aVF",
+      "V1",
+      "V2",
+      "V3",
+      "V4",
+      "V5",
+      "V6"
+    ],
+    "class_order": [
+      "NORM",
+      "MI",
+      "STTC",
+      "CD",
+      "HYP"
+    ],
+    "label_policy": {
+      "type": "diagnostic-superclass-multilabel",
+      "scp_code_policy": "key-presence",
+      "unlabeled_records": "retain-with-mask"
+    },
+    "split_policy": {
+      "train": "strat_fold 1-8",
+      "validation": "strat_fold 9",
+      "test": "strat_fold 10",
+      "patient_overlap_checked": true
+    },
+    "preprocessing_order": [
+      "load-physical-mV",
+      "canonical-lead-reorder",
+      "polyphase-resample",
+      "zero-phase-butterworth-bandpass",
+      "per-record"
+    ],
+    "summary": {
+      "records": 21799,
+      "patients": 18869,
+      "unlabeled_records": 411,
+      "split_counts": {
+        "train": 17418,
+        "validation": 2183,
+        "test": 2198
+      },
+      "class_positive_counts": {
+        "NORM": 9514,
+        "MI": 5469,
+        "STTC": 5235,
+        "CD": 4898,
+        "HYP": 2649
+      },
+      "source_sampling_rate": 500,
+      "target_sampling_rate": 250,
+      "output_signal_shape_per_record": [
+        12,
+        2500
+      ]
+    },
+    "excluded_records": 0,
+    "splits": {
+      "train": {
+        "count": 17418,
+        "signals": {
+          "file": "signals_train.npy",
+          "shape": [
+            17418,
+            12,
+            2500
+          ],
+          "dtype": "float32",
+          "bytes": 2090160128
+        },
+        "labels": {
+          "file": "labels_train.npy",
+          "shape": [
+            17418,
+            5
+          ],
+          "dtype": "uint8"
+        },
+        "label_valid": {
+          "file": "label_valid_train.npy",
+          "shape": [
+            17418
+          ],
+          "dtype": "bool",
+          "valid_count": 17084
+        },
+        "metadata": "metadata_train.csv",
+        "quality_flags": {
+          "near_flat_std": 1,
+          "near_flat_range": 1,
+          "extreme_amplitude": 11
+        }
+      },
+      "validation": {
+        "count": 2183,
+        "signals": {
+          "file": "signals_validation.npy",
+          "shape": [
+            2183,
+            12,
+            2500
+          ],
+          "dtype": "float32",
+          "bytes": 261960128
+        },
+        "labels": {
+          "file": "labels_validation.npy",
+          "shape": [
+            2183,
+            5
+          ],
+          "dtype": "uint8"
+        },
+        "label_valid": {
+          "file": "label_valid_validation.npy",
+          "shape": [
+            2183
+          ],
+          "dtype": "bool",
+          "valid_count": 2146
+        },
+        "metadata": "metadata_validation.csv",
+        "quality_flags": {
+          "near_flat_std": 0,
+          "near_flat_range": 0,
+          "extreme_amplitude": 2
+        }
+      },
+      "test": {
+        "count": 2198,
+        "signals": {
+          "file": "signals_test.npy",
+          "shape": [
+            2198,
+            12,
+            2500
+          ],
+          "dtype": "float32",
+          "bytes": 263760128
+        },
+        "labels": {
+          "file": "labels_test.npy",
+          "shape": [
+            2198,
+            5
+          ],
+          "dtype": "uint8"
+        },
+        "label_valid": {
+          "file": "label_valid_test.npy",
+          "shape": [
+            2198
+          ],
+          "dtype": "bool",
+          "valid_count": 2158
+        },
+        "metadata": "metadata_test.csv",
+        "quality_flags": {
+          "near_flat_std": 0,
+          "near_flat_range": 0,
+          "extreme_amplitude": 1
+        }
+      }
+    },
+    "elapsed_seconds": 857.586003999997
+  },
+  "train_ecg_ids": [
+    1049,
+    1501,
+    1586,
+    2002,
+    2069,
+    2141,
+    2188,
+    2999,
+    3593,
+    3865,
+    4289,
+    4550,
+    4691,
+    5233,
+    6366,
+    8012,
+    8231,
+    8308,
+    8371,
+    9060,
+    9681,
+    9805,
+    9936,
+    9998,
+    10085,
+    10091,
+    10488,
+    11159,
+    11190,
+    11452,
+    11729,
+    12200,
+    12247,
+    12415,
+    14073,
+    14332,
+    14541,
+    15065,
+    15183,
+    15429,
+    15524,
+    15884,
+    16298,
+    16488,
+    16516,
+    16795,
+    16835,
+    16843,
+    17089,
+    17219,
+    17264,
+    17353,
+    18164,
+    18284,
+    18530,
+    18930,
+    18953,
+    19582,
+    19698,
+    20325,
+    20372,
+    21226,
+    21264,
+    21320
+  ],
+  "validation_ecg_ids": [
+    30,
+    217,
+    627,
+    2618,
+    3366,
+    3905,
+    4647,
+    4925,
+    4938,
+    5006,
+    7153,
+    7419,
+    7725,
+    8159,
+    8220,
+    8761,
+    8890,
+    8944,
+    9965,
+    11304,
+    11671,
+    12610,
+    12869,
+    15211,
+    15867,
+    17185,
+    17402,
+    18438,
+    18549,
+    20092,
+    20148,
+    21777
+  ],
+  "reconstruction_validation_ecg_ids": [
+    30,
+    217,
+    627,
+    2618,
+    3366,
+    3905,
+    4647,
+    4925,
+    4938,
+    5006,
+    7153,
+    7419,
+    7725,
+    8159,
+    8220,
+    8761
+  ],
+  "pretrain_optimizer": {
+    "name": "AdamW",
+    "lr": 0.0003,
+    "betas": [
+      0.9,
+      0.95
+    ],
+    "weight_decay": 0.05,
+    "warmup_steps": 1,
+    "schedule": "warmup + cosine to 0.1*base_lr",
+    "grad_clip": 1.0
+  },
+  "probe_optimizer": {
+    "name": "AdamW",
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "loss": "BCEWithLogitsLoss"
+  },
+  "history_logging": {
+    "interval_updates": 1,
+    "moving_average_window": 50,
+    "grad_norm": "before clipping",
+    "lr": "after scheduler step (next update)",
+    "validation": "periodic fixed diagnostic subset + final 3-repeat metric"
+  },
+  "diagnostics_config": {
+    "enabled": true,
+    "eval_every": 200,
+    "eval_n": 32,
+    "repeats": 1,
+    "grad_every": 50,
+    "examples": 3,
+    "random_encoder_probe": true,
+    "cross_lead_fit_n": 256,
+    "cross_lead_ridge": 0.001
+  },
+  "diagnostic_train_ecg_ids": [
+    1049,
+    1501,
+    2002,
+    2069,
+    2188,
+    2999,
+    3865,
+    8012,
+    8231,
+    9060,
+    9681,
+    9805,
+    9936,
+    9998,
+    10085,
+    10091,
+    11190,
+    12247,
+    12415,
+    14332,
+    15065,
+    15183,
+    16298,
+    16516,
+    16835,
+    17264,
+    17353,
+    18530,
+    18930,
+    18953,
+    19698,
+    20325
+  ],
+  "diagnostic_validation_ecg_ids": [
+    30,
+    217,
+    627,
+    2618,
+    3366,
+    3905,
+    4647,
+    4925,
+    4938,
+    5006,
+    7153,
+    7419,
+    7725,
+    8159,
+    8220,
+    8761
+  ],
+  "linear_baseline_train_ecg_ids": [
+    1049,
+    1501,
+    1586,
+    2002,
+    2069,
+    2141,
+    2188,
+    2999,
+    3593,
+    3865,
+    4289,
+    4550,
+    4691,
+    5233,
+    6366,
+    8012,
+    8231,
+    8308,
+    8371,
+    9060,
+    9681,
+    9805,
+    9936,
+    9998,
+    10085,
+    10091,
+    10488,
+    11159,
+    11190,
+    11452,
+    11729,
+    12200,
+    12247,
+    12415,
+    14073,
+    14332,
+    14541,
+    15065,
+    15183,
+    15429,
+    15524,
+    15884,
+    16298,
+    16488,
+    16516,
+    16795,
+    16835,
+    16843,
+    17089,
+    17219,
+    17264,
+    17353,
+    18164,
+    18284,
+    18530,
+    18930,
+    18953,
+    19582,
+    19698,
+    20325,
+    20372,
+    21226,
+    21264,
+    21320
+  ],
+  "mask_seed_formula": "seed + 100000 + repeat*1000000 + ecg_id; argsort RNG random values",
+  "diagnostic_source_sha256": "ab162830377a70dde3d9f93dce1949b4cdaed26626d344a718cef267715c9849",
+  "policy": "global-uniform-random-exact-count",
+  "target": "preprocessed waveform",
+  "pooling": "mean-all-lead-time-tokens",
+  "threshold": 0.5,
+  "note": "smoke is not scientific evidence; pilot requires multi-seed longer confirmation"
+}

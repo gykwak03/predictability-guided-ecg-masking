@@ -1,0 +1,6 @@
+{
+  "initialization": "independent",
+  "encoder_layers_identical_at_initialization": false,
+  "decoder_layers_identical_at_initialization": false,
+  "note": "Identical initial values do not imply shared parameters or establish a cause."
+}

@@ -268,6 +268,8 @@ def save_reconstruction(bundle, directory, prefix="final"):
 
 def initialization_report(model):
     def equality(stack):
+        if stack is None or not hasattr(stack, "layers"):
+            return None
         layers = list(stack.layers)
         if len(layers) < 2:
             return None
@@ -275,9 +277,10 @@ def initialization_report(model):
         return all(all(torch.equal(first[key], value) for key, value in layer.state_dict().items())
                    for layer in layers[1:])
 
-    return dict(encoder_layers_identical_at_initialization=equality(model.encoder),
-                decoder_layers_identical_at_initialization=equality(model.decoder),
-                note="Identical initial values are not shared parameters or a proven cause. No initialization was changed.")
+    return dict(initialization=getattr(model, "initialization", "upstream"),
+                encoder_layers_identical_at_initialization=equality(getattr(model, "encoder", None)),
+                decoder_layers_identical_at_initialization=equality(getattr(model, "decoder", None)),
+                note="Identical initial values do not imply shared parameters or establish a cause.")
 
 
 def _group(name):
@@ -427,6 +430,7 @@ def run_tiny_overfit(model, signals, ecg_ids, indices, steps, seed, directory,
     mask_np, _ = (mask_factory or fixed_mask)(np.asarray(ecg_ids)[indices], model.n, model.ratio, seed)
     mask = torch.from_numpy(mask_np).to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=3e-4, betas=(0.9, 0.95), weight_decay=0.05)
+    write_json(directory / "initialization.json", initialization_report(model))
     before = evaluate_reconstruction(model, signals, ecg_ids, indices, len(indices), seed,
                                      repeats=1, examples=2, lead_order=lead_order, fs=fs,
                                      mask_factory=mask_factory)

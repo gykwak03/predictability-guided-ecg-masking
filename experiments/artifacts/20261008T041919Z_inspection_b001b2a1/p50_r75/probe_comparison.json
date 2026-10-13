@@ -1,0 +1,16 @@
+{
+  "trained": {
+    "macro_auroc": 0.7785973167828724,
+    "macro_auprc": 0.5621265950214802,
+    "macro_f1": 0.5497511984574956,
+    "valid_metric_classes": 5
+  },
+  "random": {
+    "macro_auroc": 0.7726351334736228,
+    "macro_auprc": 0.5468561201371476,
+    "macro_f1": 0.5405582017883647,
+    "valid_metric_classes": 5
+  },
+  "initialization_source": "regenerated-current-model",
+  "caveat": "Legacy initialization recreated from seed/current model; exact historical identity is unverified. Both probes recomputed with current settings; no MAE retraining."
+}

@@ -18,7 +18,10 @@ NOTEBOOK = Path(__file__).with_name("Masking_pilot.ipynb")
 def run_notebook(*, mode="smoke", train=False, seed=42,
                  artifact_dir=None, output_root=None, quiet=False, steps=None,
                  patch_samples=None, mask_ratio=None, diagnostics_enabled=True,
-                 random_probe=True, subset_seed=None, eval_mask_seed=None, mask_ratios=None):
+                 random_probe=True, subset_seed=None, eval_mask_seed=None, mask_ratios=None,
+                 initialization=None):
+    if initialization not in {None, "legacy", "independent"}:
+        raise ValueError("initialization must be legacy or independent")
     if steps is not None and (not isinstance(steps, int) or steps < 1):
         raise ValueError("steps must be a positive integer")
     if mask_ratios is not None:
@@ -49,6 +52,9 @@ def run_notebook(*, mode="smoke", train=False, seed=42,
                 source = source.replace('MODE = "smoke"', f"MODE = {mode!r}", 1)
                 source = source.replace("RUN_TRAINING = False", f"RUN_TRAINING = {train!r}", 1)
                 source = source.replace("SEED = 42", f"SEED = {seed!r}", 1)
+                if initialization is not None:
+                    source = source.replace('INITIALIZATION = "independent"',
+                                            f"INITIALIZATION = {initialization!r}", 1)
                 source = source.replace("SUBSET_SEED = None", f"SUBSET_SEED = {subset_seed!r}", 1)
                 source = source.replace("EVAL_MASK_SEED = None", f"EVAL_MASK_SEED = {eval_mask_seed!r}", 1)
                 source = source.replace("STEPS_OVERRIDE = None", f"STEPS_OVERRIDE = {steps!r}", 1)
@@ -82,6 +88,8 @@ def main():
     parser.add_argument("--mode", choices=["smoke", "pilot"], default="smoke")
     parser.add_argument("--train", action="store_true")
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--initialization", choices=["legacy", "independent"],
+                        help="Default: independent Xavier initialization of Transformer blocks; legacy reproduces old runs")
     parser.add_argument("--seeds", type=int, nargs="+", help="Run paired repeats, e.g. 42 43 44; requires --train")
     parser.add_argument("--subset-seed", type=int, help="Fix ECG subsets independently of model seed")
     parser.add_argument("--eval-mask-seed", type=int, help="Fix validation masks independently of model seed")
@@ -95,6 +103,8 @@ def main():
     parser.add_argument("--no-random-probe", action="store_true", help="Skip the additional random-encoder probe")
     parser.add_argument("--tiny-overfit", action="store_true", help="Separate two-ECG fixed-mask memorization check")
     parser.add_argument("--tiny-steps", type=int, default=200)
+    parser.add_argument("--allow-cpu-tiny-overfit", action="store_true",
+                        help="Allow the full pilot model's two-ECG diagnostic on CPU; regular pilot still requires CUDA")
     args = parser.parse_args()
     if args.seeds is not None:
         if not args.train or args.tiny_overfit or args.no_diagnostics or args.no_random_probe:
@@ -118,6 +128,8 @@ def main():
         parser.error("--tiny-steps must be positive")
     if args.tiny_overfit and args.train:
         parser.error("--tiny-overfit is separate from --train; do not combine them")
+    if args.allow_cpu_tiny_overfit and not args.tiny_overfit:
+        parser.error("--allow-cpu-tiny-overfit requires --tiny-overfit")
     if args.seeds is not None:
         from datetime import datetime, timezone
         import uuid
@@ -134,7 +146,8 @@ def main():
                                   artifact_dir=args.artifact_dir.resolve() if args.artifact_dir else None,
                                   output_root=suite, steps=args.steps,
                                   patch_samples=args.patch_samples, mask_ratio=args.mask_ratio,
-                                  subset_seed=subset_seed, eval_mask_seed=eval_seed, mask_ratios=args.mask_ratios)
+                                  subset_seed=subset_seed, eval_mask_seed=eval_seed, mask_ratios=args.mask_ratios,
+                                  initialization=args.initialization)
             runs.append(result["RUN_DIR"])
             summarize_runs(runs, suite, expected_seeds=args.seeds)
         print("Completed seed comparison. Output:", suite, flush=True)
@@ -144,11 +157,12 @@ def main():
                           output_root=args.output_root.resolve() if args.output_root else None,
                           steps=args.steps, patch_samples=args.patch_samples, mask_ratio=args.mask_ratio,
                           diagnostics_enabled=not args.no_diagnostics, random_probe=not args.no_random_probe,
-                          subset_seed=args.subset_seed, eval_mask_seed=args.eval_mask_seed, mask_ratios=args.mask_ratios)
+                          subset_seed=args.subset_seed, eval_mask_seed=args.eval_mask_seed, mask_ratios=args.mask_ratios,
+                          initialization=args.initialization)
     if args.tiny_overfit:
         if not result["TRAINING_AVAILABLE"]:
             parser.error("Install PyTorch and scikit-learn before tiny overfit")
-        if args.mode == "pilot" and result["DEVICE"].type != "cuda":
+        if args.mode == "pilot" and result["DEVICE"].type != "cuda" and not args.allow_cpu_tiny_overfit:
             parser.error("Pilot-sized tiny overfit requires an allocated CUDA GPU; use --mode smoke on CPU")
         p, ratio = args.patch_samples or 125, args.mask_ratio if args.mask_ratio is not None else 0.75
         result["seed_everything"](args.seed)
@@ -165,7 +179,8 @@ def main():
         result["save_learning_curves"](history, directory, p, ratio)
         config_path = directory / "run_config.json"
         config = json.loads(config_path.read_text(encoding="utf-8"))
-        config.update(profile=result["PROFILE"], source_manifest_sha256=result["SOURCE_MANIFEST_SHA256"])
+        config.update(profile=result["PROFILE"], source_manifest_sha256=result["SOURCE_MANIFEST_SHA256"],
+                      device=str(result["DEVICE"]))
         result["diagnostics"].write_json(config_path, config)
         print("Completed tiny overfit. Output:", directory, flush=True)
         return

@@ -1,0 +1,6 @@
+{
+  "macro_auroc": 0.452924430641822,
+  "macro_auprc": 0.3016177265446272,
+  "macro_f1": 0.23259767064720624,
+  "valid_metric_classes": 5
+}

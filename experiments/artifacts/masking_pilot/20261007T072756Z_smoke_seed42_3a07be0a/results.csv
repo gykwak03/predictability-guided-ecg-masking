@@ -1,0 +1,2 @@
+mode,seed,patch_samples,patch_seconds,mask_ratio,total_tokens,visible_tokens,parameters,steps,train_ecgs,labeled_train_ecgs,validation_ecgs,validation_masked_mse,train_seconds,probe_seconds,gpu_peak_allocated_mb,macro_auroc,macro_auprc,macro_f1,valid_metric_classes
+smoke,42,125,0.5,0.75,240,60,36829,8,64,62,30,1.2030975412439417,0.3416856999974698,0.30681949999416247,,0.4731663599417223,0.2616344593088195,0.28226878265241434,5

@@ -1,0 +1,49 @@
+{
+  "kind": "paired-two-training-ECG-fixed-mask-audit",
+  "device": "cpu",
+  "torch_version": "2.14.1+cpu",
+  "matched_inputs_and_masks": true,
+  "matched_ecg_ids": [
+    11,
+    22
+  ],
+  "results": [
+    {
+      "initialization": "legacy",
+      "device": "cpu",
+      "parameters": 3127282,
+      "steps": 1000,
+      "initial_masked_mse": 1.263232610507311,
+      "final_masked_mse": 0.004770309782823983,
+      "final_skill_vs_zero": 0.9951593688336061,
+      "final_rms_ratio": 0.9922501278350386,
+      "final_correlation": 0.9975993545440841,
+      "encoder_layers_identical": true,
+      "decoder_layers_identical": true,
+      "run_dir": "experiments/artifacts/model_audit_20261013/legacy/20261013T105513Z_tiny_overfit_pilot_seed42_517b9697"
+    },
+    {
+      "initialization": "independent",
+      "device": "cpu",
+      "parameters": 3127282,
+      "steps": 1000,
+      "initial_masked_mse": 1.2480396005177785,
+      "final_masked_mse": 0.004772119302450918,
+      "final_skill_vs_zero": 0.995157532638998,
+      "final_rms_ratio": 0.9967163571231177,
+      "final_correlation": 0.9975863474838661,
+      "encoder_layers_identical": false,
+      "decoder_layers_identical": false,
+      "run_dir": "experiments/artifacts/model_audit_20261013/independent/20261013T105714Z_tiny_overfit_pilot_seed42_113a73ca"
+    }
+  ],
+  "local_results_inventory": {
+    "plain_nine_condition_pilot": true,
+    "plain_three_seed_comparison": true,
+    "st_mem_nine_condition_grid": false,
+    "st_mem_smoke": true
+  },
+  "conclusion": "Both initializations memorize the two ECGs. This does not identify the cause of weak random-mask pilot learning or establish a downstream improvement.",
+  "modification": "Only Transformer block initialization changed; embeddings, head, parameter count, mask policy and optimizer remain matched.",
+  "next_check": "Run matched legacy/independent pilots on an allocated GPU. Keep initialization fixed across all masking policies."
+}

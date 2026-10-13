@@ -127,7 +127,7 @@ Do not execute its model check, training, plotting grid or selection advice.
     model.ratio = a.mask_ratio
     # Remove custom-model dimensions from the reused profile: actual ST-MEM
     # architecture is recorded separately, never mislabeled as the old model.
-    for name in ["enc_dim", "enc_depth", "enc_heads", "dec_dim", "dec_depth", "dec_heads"]:
+    for name in ["enc_dim", "enc_depth", "enc_heads", "dec_dim", "dec_depth", "dec_heads", "initialization"]:
         ns["PROFILE"].pop(name, None)
     accum = a.accum_steps or (1 if a.mode == "smoke" else 8)
     q, keep = mask_layout(model.n, a.mask_ratio)

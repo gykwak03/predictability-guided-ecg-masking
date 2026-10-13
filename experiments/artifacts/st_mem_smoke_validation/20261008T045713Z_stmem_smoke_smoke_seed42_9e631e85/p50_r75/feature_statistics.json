@@ -1,0 +1,22 @@
+{
+  "trained": {
+    "ecgs": 62,
+    "feature_dim": 32,
+    "std_min": 0.06573585331983874,
+    "std_mean": 0.15274259495266762,
+    "near_constant_dimensions": 0,
+    "effective_rank": 4.450852397495955,
+    "mean_off_diagonal_cosine": 0.9730793536158825,
+    "note": "Effective rank is based on centered covariance eigenvalues; no universal collapse cutoff."
+  },
+  "random": {
+    "ecgs": 62,
+    "feature_dim": 32,
+    "std_min": 0.06614631434062557,
+    "std_mean": 0.15581819171794004,
+    "near_constant_dimensions": 0,
+    "effective_rank": 4.474455867306795,
+    "mean_off_diagonal_cosine": 0.9719554967096161,
+    "note": "Effective rank is based on centered covariance eigenvalues; no universal collapse cutoff."
+  }
+}

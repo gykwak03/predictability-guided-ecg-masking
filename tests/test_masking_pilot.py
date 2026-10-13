@@ -13,6 +13,46 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 @pytest.fixture
+def plain_model_definitions():
+    """Load the real model without ECG files, to verify historical compatibility."""
+    torch = pytest.importorskip("torch")
+    notebook = json.loads((ROOT / "experiments/Masking_pilot.ipynb").read_text(encoding="utf-8"))
+    source = next("".join(cell["source"]) for cell in notebook["cells"]
+                  if "class PlainECGMAE" in "".join(cell["source"]))
+    namespace = dict(TRAINING_AVAILABLE=True, torch=torch, nn=torch.nn,
+                     np=np, random=random, N_LEADS=12, SIGNAL_LENGTH=2500)
+    exec(compile(source, "notebook_model_definitions", "exec"), namespace)
+    return namespace
+
+
+def test_initialization_preserves_legacy_and_only_changes_transformer_blocks(plain_model_definitions):
+    ns, torch = plain_model_definitions, plain_model_definitions["torch"]
+    cfg = dict(enc_dim=32, enc_depth=2, enc_heads=4, dec_dim=16, dec_depth=2, dec_heads=4)
+    ns["seed_everything"](42)
+    historical = ns["PlainECGMAE"](50, cfg)
+    ns["seed_everything"](42)
+    explicit_legacy = ns["PlainECGMAE"](50, dict(cfg, initialization="legacy"))
+    ns["seed_everything"](42)
+    independent = ns["PlainECGMAE"](50, dict(cfg, initialization="independent"))
+    ns["seed_everything"](42)
+    repeated = ns["PlainECGMAE"](50, dict(cfg, initialization="independent"))
+    assert sum(p.numel() for p in historical.parameters()) == sum(p.numel() for p in independent.parameters())
+    for key, value in historical.state_dict().items():
+        assert torch.equal(value, explicit_legacy.state_dict()[key])
+        assert value.shape == independent.state_dict()[key].shape
+        assert torch.equal(independent.state_dict()[key], repeated.state_dict()[key])
+        if not key.startswith(("encoder.layers.", "decoder.layers.")):
+            assert torch.equal(value, independent.state_dict()[key]), key
+    for name in ("encoder", "decoder"):
+        old_layers, new_layers = getattr(historical, name).layers, getattr(independent, name).layers
+        assert torch.equal(old_layers[0].self_attn.in_proj_weight, old_layers[1].self_attn.in_proj_weight)
+        assert not torch.equal(new_layers[0].self_attn.in_proj_weight, new_layers[1].self_attn.in_proj_weight)
+        assert old_layers[0].self_attn.in_proj_weight.data_ptr() != old_layers[1].self_attn.in_proj_weight.data_ptr()
+    with pytest.raises(ValueError, match="initialization"):
+        ns["PlainECGMAE"](50, dict(cfg, initialization="unknown"))
+
+
+@pytest.fixture
 def curve_plotter():
     """Load the notebook's plotting implementation without data or PyTorch."""
     import matplotlib
@@ -427,6 +467,7 @@ def test_runner_overrides_validation_before_training():
     runner = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(runner)
     for kwargs in [dict(steps=0), dict(patch_samples=50), dict(mask_ratio=0.5),
-                   dict(patch_samples=64, mask_ratio=0.5), dict(patch_samples=50, mask_ratio=1)]:
+                   dict(patch_samples=64, mask_ratio=0.5), dict(patch_samples=50, mask_ratio=1),
+                   dict(initialization="unknown")]:
         with pytest.raises(ValueError):
             runner.run_notebook(**kwargs)

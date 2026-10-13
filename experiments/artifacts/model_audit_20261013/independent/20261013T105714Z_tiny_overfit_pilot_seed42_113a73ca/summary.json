@@ -1,0 +1,30 @@
+{
+  "initial": {
+    "masked_samples": 45000,
+    "masked_mse": 1.2480396005177785,
+    "zero_masked_mse": 0.9854726829719864,
+    "skill_vs_zero": -0.26643754015985843,
+    "pred_rms": 0.5143086811110306,
+    "target_rms": 0.9927097677428114,
+    "rms_ratio": 0.5180856457980136,
+    "pred_std": 0.5015905432245841,
+    "target_std": 0.9926781055380319,
+    "mean_bias": -0.12159624240397565,
+    "masked_correlation": 0.0037646161524820796
+  },
+  "final": {
+    "masked_samples": 45000,
+    "masked_mse": 0.004772119302450918,
+    "zero_masked_mse": 0.9854726829719864,
+    "skill_vs_zero": 0.995157532638998,
+    "pred_rms": 0.9894500633851512,
+    "target_rms": 0.9927097677428114,
+    "rms_ratio": 0.9967163571231177,
+    "pred_std": 0.9893721307939285,
+    "target_std": 0.9926781055380319,
+    "mean_bias": 0.00448978211379469,
+    "masked_correlation": 0.9975863474838661
+  },
+  "mse_reduction_fraction": 0.9961763077866511,
+  "note": "Low fixed-training loss verifies memorization, not validation or downstream benefit."
+}

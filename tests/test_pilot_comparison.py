@@ -54,6 +54,19 @@ def test_incompatible_masks_and_duplicate_seeds_rejected(modules, tmp_path):
     assert not (tmp_path / "bad").exists()
 
 
+def test_different_initialization_policies_cannot_be_pooled(modules, tmp_path):
+    comparison, _ = modules
+    runs = [saved_run(tmp_path, 42, 0.78), saved_run(tmp_path, 43, 0.80)]
+    for run, policy in zip(runs, ["legacy", "independent"]):
+        path = run / "run_config.json"
+        config = json.loads(path.read_text(encoding="utf-8"))
+        config["profile"]["initialization"] = policy
+        path.write_text(json.dumps(config), encoding="utf-8")
+    with pytest.raises(ValueError, match="different subsets, evaluation masks"):
+        comparison.summarize_runs(runs, tmp_path / "bad")
+    assert not (tmp_path / "bad").exists()
+
+
 def test_saved_ecg_id_order_restored_and_missing_ids_rejected(modules):
     _, inspector = modules
     frame = pd.DataFrame(dict(ecg_id=[50, 20, 30]))

@@ -1,0 +1,3 @@
+initialization,device,parameters,steps,initial_masked_mse,final_masked_mse,final_skill_vs_zero,final_rms_ratio,final_correlation,encoder_layers_identical,decoder_layers_identical,run_dir
+legacy,cpu,3127282,1000,1.263232610507311,0.004770309782823983,0.9951593688336061,0.9922501278350386,0.9975993545440841,True,True,experiments/artifacts/model_audit_20261013/legacy/20261013T105513Z_tiny_overfit_pilot_seed42_517b9697
+independent,cpu,3127282,1000,1.2480396005177785,0.004772119302450918,0.995157532638998,0.9967163571231177,0.9975863474838661,False,False,experiments/artifacts/model_audit_20261013/independent/20261013T105714Z_tiny_overfit_pilot_seed42_113a73ca

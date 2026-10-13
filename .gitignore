@@ -7,4 +7,15 @@ __pycache__/
 
 # Generated PTB-XL arrays are multi-gigabyte local artifacts.
 preprocessing/artifacts/
-experiments/artifacts/
+
+# Keep compact experiment evidence in Git. Weights, waveform arrays, and
+# reconstruction example images remain local; changing ignores does not download
+# server outputs or automatically add/commit existing records.
+experiments/artifacts/**
+!experiments/artifacts/**/
+!experiments/artifacts/**/*.csv
+!experiments/artifacts/**/*.json
+!experiments/artifacts/**/*.md
+!experiments/artifacts/**/*curves*.png
+!experiments/artifacts/**/gradient_updates.png
+!experiments/artifacts/**/condition_comparison.png

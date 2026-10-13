@@ -1,0 +1,35 @@
+{
+  "kind": "tiny-overfit-not-pilot",
+  "steps": 200,
+  "seed": 42,
+  "patch_samples": 125,
+  "mask_ratio": 0.75,
+  "ecg_ids": [
+    1049,
+    1501
+  ],
+  "artifact_indices": [
+    762,
+    1109
+  ],
+  "learning_rate": 0.0003,
+  "schedule": "constant",
+  "mask": "fixed",
+  "note": "Training ECG memorization only. No generalization claim or automatic pass/fail cutoff.",
+  "profile": {
+    "train_n": 64,
+    "val_n": 32,
+    "batch": 4,
+    "steps": 8,
+    "eval_n": 16,
+    "probe_steps": 8,
+    "probe_batch": 16,
+    "enc_dim": 32,
+    "enc_depth": 1,
+    "enc_heads": 4,
+    "dec_dim": 32,
+    "dec_depth": 1,
+    "dec_heads": 4
+  },
+  "source_manifest_sha256": "47d6a05598767244e6b24ee7b27410b5ebbc26875fcbd57ea5d7a4bc7e182bba"
+}
