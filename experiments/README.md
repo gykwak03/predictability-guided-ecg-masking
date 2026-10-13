@@ -1,5 +1,46 @@
 # Mask 단위 확정 pilot
 
+## 기본 MAE를 ST-MEM small 크기로 확대
+
+`run_masking_pilot.py --model-size stmem-small`은 PlainECGMAE의 encoder/decoder
+폭·깊이·head 수를 ST-MEM small과 맞춥니다. `--model-size baseline` 또는 옵션 생략은
+기존 smoke/pilot 크기를 사용합니다. 데이터 수와 update 수는 `--mode`/`--steps`로
+별도로 정하며, 큰 모델도 `--mode smoke`로 짧게 코드 검증할 수 있습니다.
+
+| 항목 | 기존 MAE pilot | 확대 MAE | ST-MEM small |
+| --- | --- | --- | --- |
+| Encoder 차원 / 층 / heads | 192 / 6 / 6 | 384 / 12 / 6 | 384 / 12 / 6 |
+| Decoder 차원 / 층 / heads | 128 / 2 / 4 | 256 / 4 / 4 | 256 / 4 / 4 |
+| 파라미터 수, patch 50 | 3,127,282 | 24,624,818 | 24,624,278 |
+
+확대 MAE는 기존의 global random mask, learned lead/time embedding, global decoder,
+masked-only MSE, optimizer, pooling을 유지합니다. 파라미터 수는 약 7.87배이며,
+ST-MEM과의 차이는 540개입니다. 크기 선택과 실제 차원은 `run_config.json`과
+checkpoint에, 크기 이름과 파라미터 수는 `results.csv`에 기록합니다.
+과거 checkpoint도 저장된 profile로 재평가합니다.
+Global decoder 때문에 ST-MEM과 메모리 사용량·실행 시간까지 같아지는 것은 아닙니다.
+
+과거 pilot과 **크기만** 비교할 때는 과거와 같은 `--initialization legacy`,
+patch/mask, subset/evaluation seed, batch 32, 1,000 update를 사용합니다.
+기본 초기화는 계속 `independent`이며, 새 초기화로 비교하면 두 크기 모두에 같은 값을 지정하세요.
+
+할당된 GPU 노드에서, 서버 clone의 `experiments` 폴더 기준:
+
+```bash
+/data/gykwak03/envs/ecg-mask-pilot/bin/python -u run_masking_pilot.py \
+  --mode pilot --train --model-size stmem-small --initialization legacy \
+  --steps 1000 --seed 42 --subset-seed 42 --eval-mask-seed 42 \
+  --patch-samples 50 --mask-ratio 0.75 \
+  --artifact-dir /data/gykwak03/capstone2/ptbxl_250hz \
+  --output-root /data/gykwak03/capstone2/results/mae_stmem_size_pilot
+```
+
+이 실험은 모델 용량을 늘렸을 때의 효과를 확인합니다. ST-MEM과는 mask 정책·위치
+embedding·decoder 구조 등이 여전히 다르므로, ST-MEM의 우위가 용량 때문인지
+단독으로 확정하는 실험은 아닙니다. GPU population pilot의 성능 결과는 아직 없고,
+로컬에서는 두 초기화의 full-size forward/backward·가중치 갱신과
+1-update smoke 학습·checkpoint 저장/재평가를 확인했습니다.
+
 ## 기본 ECG-MAE의 초기화와 결과 보관 (2026-10-13 점검)
 
 `PlainECGMAE`는 기존 global random mask, encoder/decoder 크기, learned lead/time

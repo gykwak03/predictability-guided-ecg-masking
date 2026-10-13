@@ -25,6 +25,43 @@ def plain_model_definitions():
     return namespace
 
 
+@pytest.fixture
+def plain_config_definitions():
+    """Execute the real configuration cell without opening ECG artifacts."""
+    import pandas as pd
+    notebook = json.loads((ROOT / "experiments/Masking_pilot.ipynb").read_text(encoding="utf-8"))
+    source = next("".join(cell["source"]) for cell in notebook["cells"]
+                  if cell["cell_type"] == "code" and 'MODE = "smoke"' in "".join(cell["source"]))
+
+    def load(mode, model_size):
+        selected = source.replace('MODE = "smoke"', f"MODE = {mode!r}", 1)
+        selected = selected.replace('MODEL_SIZE = "baseline"', f"MODEL_SIZE = {model_size!r}", 1)
+        namespace = dict(Path=Path, pd=pd, display=lambda value: None)
+        exec(compile(selected, "notebook_config_definitions", "exec"), namespace)
+        return namespace
+
+    return load
+
+
+@pytest.mark.parametrize("mode", ["smoke", "pilot"])
+def test_scaled_size_only_changes_architecture(plain_config_definitions, mode):
+    original = plain_config_definitions(mode, "baseline")
+    scaled = plain_config_definitions(mode, "stmem-small")
+    assert scaled["ARCHITECTURE"] == dict(enc_dim=384, enc_depth=12, enc_heads=6,
+                                          dec_dim=256, dec_depth=4, dec_heads=4)
+    for key, value in original["PROFILE"].items():
+        if key not in original["ARCHITECTURE"]:
+            assert scaled["PROFILE"][key] == value, key
+    for key in ("GRID", "DATA_SEED", "EVAL_SEED", "DIAGNOSTICS", "INITIALIZATION"):
+        assert original[key] == scaled[key], key
+    expected = dict(enc_dim=192, enc_depth=6, enc_heads=6,
+                    dec_dim=128, dec_depth=2, dec_heads=4) if mode == "pilot" else dict(
+                        enc_dim=32, enc_depth=1, enc_heads=4, dec_dim=32, dec_depth=1, dec_heads=4)
+    assert original["ARCHITECTURE"] == expected
+    with pytest.raises(ValueError, match="model size"):
+        plain_config_definitions(mode, "unknown")
+
+
 def test_initialization_preserves_legacy_and_only_changes_transformer_blocks(plain_model_definitions):
     ns, torch = plain_model_definitions, plain_model_definitions["torch"]
     cfg = dict(enc_dim=32, enc_depth=2, enc_heads=4, dec_dim=16, dec_depth=2, dec_heads=4)
@@ -50,6 +87,129 @@ def test_initialization_preserves_legacy_and_only_changes_transformer_blocks(pla
         assert old_layers[0].self_attn.in_proj_weight.data_ptr() != old_layers[1].self_attn.in_proj_weight.data_ptr()
     with pytest.raises(ValueError, match="initialization"):
         ns["PlainECGMAE"](50, dict(cfg, initialization="unknown"))
+
+
+@pytest.mark.parametrize("patch_length", [50, 125, 250])
+def test_lead_time_positions_and_decoder_restore_with_distinct_batch_masks(
+        plain_model_definitions, patch_length):
+    """Sentinel values detect wrong lead/time indexing, gather or scatter routing."""
+    ns, torch = plain_model_definitions, plain_model_definitions["torch"]
+    cfg = dict(enc_dim=4, enc_depth=1, enc_heads=1,
+               dec_dim=4, dec_depth=1, dec_heads=1, initialization="independent")
+    model = ns["PlainECGMAE"](patch_length, cfg)
+    # Isolate routing from attention; expected values below use explicit lead/time loops.
+    model.encoder = torch.nn.Identity()
+    model.to_decoder = torch.nn.Identity()
+    model.decoder = torch.nn.Identity()
+    with torch.no_grad():
+        model.patch_embed.weight.zero_()
+        model.patch_embed.weight[0, 0] = 1
+        model.patch_embed.bias.zero_()
+        model.enc_lead.zero_()
+        model.enc_time.zero_()
+        model.dec_lead.zero_()
+        model.dec_time.zero_()
+        model.enc_lead[0, :, 0, 0] = torch.arange(12) * 100
+        model.enc_time[0, 0, :, 0] = torch.arange(model.q)
+        model.dec_lead[0, :, 0, 0] = torch.arange(12) * -10
+        model.dec_time[0, 0, :, 0] = torch.arange(model.q) * 2
+        model.mask_token.fill_(-17)
+        model.reconstruction.weight.zero_()
+        model.reconstruction.weight[:, 0] = 1
+        model.reconstruction.bias.zero_()
+    x = torch.arange(2 * 12 * 2500, dtype=torch.float32).reshape(2, 12, 2500)
+    mask = torch.zeros((2, model.n), dtype=torch.bool)
+    mask[0, ::2], mask[1, 1::2] = True, True
+    prediction, target = model(x, mask)
+    expected_target, expected_prediction = [], []
+    for batch in range(2):
+        raw_patches, predictions = [], []
+        for lead in range(12):
+            for time in range(model.q):
+                token = lead * model.q + time
+                raw = x[batch, lead, time * patch_length:(time + 1) * patch_length]
+                content = -17 if mask[batch, token] else float(raw[0]) + lead * 100 + time
+                value = content - lead * 10 + time * 2
+                raw_patches.append(raw)
+                predictions.append(torch.full((patch_length,), value))
+        expected_target.append(torch.stack(raw_patches))
+        expected_prediction.append(torch.stack(predictions))
+    torch.testing.assert_close(target, torch.stack(expected_target), rtol=0, atol=0)
+    torch.testing.assert_close(prediction, torch.stack(expected_prediction), rtol=0, atol=0)
+
+
+@pytest.mark.parametrize("patch_length", [50, 125, 250])
+@pytest.mark.parametrize("ratio", [0.5, 0.75, 0.9])
+def test_all_conditions_hidden_input_jacobian_and_sample_level_loss(
+        plain_model_definitions, patch_length, ratio):
+    """Masked outputs must learn from visible inputs, never from hidden input values."""
+    ns, torch = plain_model_definitions, plain_model_definitions["torch"]
+    torch.set_num_threads(4)
+    ns["seed_everything"](42)
+    cfg = dict(enc_dim=32, enc_depth=2, enc_heads=4,
+               dec_dim=16, dec_depth=2, dec_heads=4, initialization="independent")
+    model = ns["PlainECGMAE"](patch_length, cfg).train()
+    x = torch.randn(2, 12, 2500, requires_grad=True)
+    masks = np.zeros((2, model.n), dtype=bool)
+    rng = np.random.default_rng(74)
+    for row in masks:
+        row[rng.choice(model.n, round(model.n * ratio), replace=False)] = True
+    mask = torch.from_numpy(masks)
+    prediction, target = model(x, mask)
+    loss = ns["masked_mse"](prediction, target.detach(), mask)
+    sample_mask = mask.repeat_interleave(patch_length, dim=1).reshape_as(x)
+    sample_error = (prediction.reshape_as(x) - x.detach()).square()[sample_mask].mean()
+    torch.testing.assert_close(loss, sample_error, rtol=1e-6, atol=1e-7)
+    # Isolates d(prediction)/d(input): the target branch must not contribute here.
+    loss.backward()
+    assert torch.count_nonzero(x.grad[sample_mask]) == 0
+    assert x.grad[~sample_mask].abs().sum() > 0
+    for name, parameter in model.named_parameters():
+        assert parameter.grad is not None, name
+        assert torch.isfinite(parameter.grad).all(), name
+        assert parameter.grad.abs().sum() > 0, name
+    with torch.no_grad():
+        original, _ = model(x.detach(), mask)
+        changed = x.detach().clone()
+        changed[sample_mask] += 100
+        alternative, _ = model(changed, mask)
+    torch.testing.assert_close(original, alternative, rtol=0, atol=0)
+
+
+@pytest.mark.parametrize("initialization", ["legacy", "independent"])
+@pytest.mark.parametrize("model_size", ["baseline", "stmem-small"])
+def test_full_pilot_encoder_updates_and_train_eval_prediction_agree(
+        plain_model_definitions, plain_config_definitions, initialization, model_size):
+    ns, torch = plain_model_definitions, plain_model_definitions["torch"]
+    torch.set_num_threads(4)
+    ns["seed_everything"](42)
+    cfg = dict(plain_config_definitions("pilot", model_size)["PROFILE"], initialization=initialization)
+    model = ns["PlainECGMAE"](50, cfg).train()
+    x = torch.randn(2, 12, 2500)
+    mask = torch.zeros((2, model.n), dtype=torch.bool)
+    for row in mask:
+        row[torch.randperm(model.n)[:450]] = True
+    train_prediction, target = model(x, mask)
+    loss = ns["masked_mse"](train_prediction, target, mask)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=3e-4,
+                                 betas=(0.9, 0.95), weight_decay=0.05)
+    before = {name: p.detach().clone() for name, p in model.named_parameters()}
+    loss.backward()
+    for name, parameter in model.named_parameters():
+        assert parameter.grad is not None and torch.isfinite(parameter.grad).all(), name
+        assert parameter.grad.abs().sum() > 0, name
+    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0, error_if_nonfinite=True)
+    optimizer.step()
+    for name, parameter in model.named_parameters():
+        assert not torch.equal(before[name], parameter), name
+    # Compare execution modes at identical, updated weights (dropout is zero).
+    with torch.no_grad():
+        train_prediction, _ = model(x, mask)
+        model.eval()
+        eval_prediction, _ = model(x, mask)
+        singles = torch.cat([model(x[i:i+1], mask[i:i+1])[0] for i in range(len(x))])
+    torch.testing.assert_close(train_prediction, eval_prediction, rtol=1e-4, atol=3e-6)
+    torch.testing.assert_close(eval_prediction, singles, rtol=1e-4, atol=3e-6)
 
 
 @pytest.fixture
@@ -468,6 +628,6 @@ def test_runner_overrides_validation_before_training():
     spec.loader.exec_module(runner)
     for kwargs in [dict(steps=0), dict(patch_samples=50), dict(mask_ratio=0.5),
                    dict(patch_samples=64, mask_ratio=0.5), dict(patch_samples=50, mask_ratio=1),
-                   dict(initialization="unknown")]:
+                   dict(initialization="unknown"), dict(model_size="unknown")]:
         with pytest.raises(ValueError):
             runner.run_notebook(**kwargs)

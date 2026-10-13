@@ -1,0 +1,486 @@
+{
+  "scope": {
+    "plain_grid_conditions": 9,
+    "plain_repeat_conditions": 2,
+    "plain_seeds": [
+      42,
+      43,
+      44
+    ],
+    "st_mem_grid_conditions": 9,
+    "st_mem_seeds": [
+      42
+    ]
+  },
+  "comparable_data_checks": [
+    {
+      "run": "20261012T004115Z_stmem_pilot_small_seed42_c4db724c",
+      "source_manifest_sha256": true,
+      "train_ecg_ids": true,
+      "validation_ecg_ids": true,
+      "reconstruction_validation_ecg_ids": true,
+      "lead_order": true,
+      "class_order": true,
+      "source_preprocessing": true,
+      "versions": {
+        "torch": "2.5.1+cu121",
+        "numpy": "2.4.6",
+        "pandas": "3.0.6"
+      },
+      "pretrain_optimizer": {
+        "name": "AdamW",
+        "lr": 0.0003,
+        "betas": [
+          0.9,
+          0.95
+        ],
+        "weight_decay": 0.05,
+        "grad_clip": 1.0,
+        "warmup_steps": 100,
+        "schedule": "warmup + cosine to 0.1*base_lr"
+      },
+      "probe_optimizer": {
+        "name": "AdamW",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "loss": "BCEWithLogitsLoss",
+        "steps": 300,
+        "threshold": 0.5,
+        "seed": 142
+      },
+      "architecture": {
+        "embed_dim": 384,
+        "depth": 12,
+        "num_heads": 6,
+        "decoder_embed_dim": 256,
+        "decoder_depth": 4,
+        "decoder_num_heads": 4
+      },
+      "policy": "per-lead-uniform-decimal-floor-visible-count-v2",
+      "pooling": "official-ST-MEM-mean-patch-tokens-before-final-norm-excluding-SEP",
+      "parameters": 24624278
+    },
+    {
+      "run": "20261012T010133Z_stmem_pilot_small_seed42_fc5ca139",
+      "source_manifest_sha256": true,
+      "train_ecg_ids": true,
+      "validation_ecg_ids": true,
+      "reconstruction_validation_ecg_ids": true,
+      "lead_order": true,
+      "class_order": true,
+      "source_preprocessing": true,
+      "versions": {
+        "torch": "2.5.1+cu121",
+        "numpy": "2.4.6",
+        "pandas": "3.0.6"
+      },
+      "pretrain_optimizer": {
+        "name": "AdamW",
+        "lr": 0.0003,
+        "betas": [
+          0.9,
+          0.95
+        ],
+        "weight_decay": 0.05,
+        "grad_clip": 1.0,
+        "warmup_steps": 100,
+        "schedule": "warmup + cosine to 0.1*base_lr"
+      },
+      "probe_optimizer": {
+        "name": "AdamW",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "loss": "BCEWithLogitsLoss",
+        "steps": 300,
+        "threshold": 0.5,
+        "seed": 142
+      },
+      "architecture": {
+        "embed_dim": 384,
+        "depth": 12,
+        "num_heads": 6,
+        "decoder_embed_dim": 256,
+        "decoder_depth": 4,
+        "decoder_num_heads": 4
+      },
+      "policy": "per-lead-uniform-decimal-floor-visible-count-v2",
+      "pooling": "official-ST-MEM-mean-patch-tokens-before-final-norm-excluding-SEP",
+      "parameters": 24624278
+    },
+    {
+      "run": "20261012T011717Z_stmem_pilot_small_seed42_be7c9d1a",
+      "source_manifest_sha256": true,
+      "train_ecg_ids": true,
+      "validation_ecg_ids": true,
+      "reconstruction_validation_ecg_ids": true,
+      "lead_order": true,
+      "class_order": true,
+      "source_preprocessing": true,
+      "versions": {
+        "torch": "2.5.1+cu121",
+        "numpy": "2.4.6",
+        "pandas": "3.0.6"
+      },
+      "pretrain_optimizer": {
+        "name": "AdamW",
+        "lr": 0.0003,
+        "betas": [
+          0.9,
+          0.95
+        ],
+        "weight_decay": 0.05,
+        "grad_clip": 1.0,
+        "warmup_steps": 100,
+        "schedule": "warmup + cosine to 0.1*base_lr"
+      },
+      "probe_optimizer": {
+        "name": "AdamW",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "loss": "BCEWithLogitsLoss",
+        "steps": 300,
+        "threshold": 0.5,
+        "seed": 142
+      },
+      "architecture": {
+        "embed_dim": 384,
+        "depth": 12,
+        "num_heads": 6,
+        "decoder_embed_dim": 256,
+        "decoder_depth": 4,
+        "decoder_num_heads": 4
+      },
+      "policy": "per-lead-uniform-decimal-floor-visible-count-v2",
+      "pooling": "official-ST-MEM-mean-patch-tokens-before-final-norm-excluding-SEP",
+      "parameters": 24624278
+    },
+    {
+      "run": "20261012T013441Z_stmem_pilot_small_seed42_19dda090",
+      "source_manifest_sha256": true,
+      "train_ecg_ids": true,
+      "validation_ecg_ids": true,
+      "reconstruction_validation_ecg_ids": true,
+      "lead_order": true,
+      "class_order": true,
+      "source_preprocessing": true,
+      "versions": {
+        "torch": "2.5.1+cu121",
+        "numpy": "2.4.6",
+        "pandas": "3.0.6"
+      },
+      "pretrain_optimizer": {
+        "name": "AdamW",
+        "lr": 0.0003,
+        "betas": [
+          0.9,
+          0.95
+        ],
+        "weight_decay": 0.05,
+        "grad_clip": 1.0,
+        "warmup_steps": 100,
+        "schedule": "warmup + cosine to 0.1*base_lr"
+      },
+      "probe_optimizer": {
+        "name": "AdamW",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "loss": "BCEWithLogitsLoss",
+        "steps": 300,
+        "threshold": 0.5,
+        "seed": 142
+      },
+      "architecture": {
+        "embed_dim": 384,
+        "depth": 12,
+        "num_heads": 6,
+        "decoder_embed_dim": 256,
+        "decoder_depth": 4,
+        "decoder_num_heads": 4
+      },
+      "policy": "per-lead-uniform-decimal-floor-visible-count-v2",
+      "pooling": "official-ST-MEM-mean-patch-tokens-before-final-norm-excluding-SEP",
+      "parameters": 24653303
+    },
+    {
+      "run": "20261012T014623Z_stmem_pilot_small_seed42_f2b58408",
+      "source_manifest_sha256": true,
+      "train_ecg_ids": true,
+      "validation_ecg_ids": true,
+      "reconstruction_validation_ecg_ids": true,
+      "lead_order": true,
+      "class_order": true,
+      "source_preprocessing": true,
+      "versions": {
+        "torch": "2.5.1+cu121",
+        "numpy": "2.4.6",
+        "pandas": "3.0.6"
+      },
+      "pretrain_optimizer": {
+        "name": "AdamW",
+        "lr": 0.0003,
+        "betas": [
+          0.9,
+          0.95
+        ],
+        "weight_decay": 0.05,
+        "grad_clip": 1.0,
+        "warmup_steps": 100,
+        "schedule": "warmup + cosine to 0.1*base_lr"
+      },
+      "probe_optimizer": {
+        "name": "AdamW",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "loss": "BCEWithLogitsLoss",
+        "steps": 300,
+        "threshold": 0.5,
+        "seed": 142
+      },
+      "architecture": {
+        "embed_dim": 384,
+        "depth": 12,
+        "num_heads": 6,
+        "decoder_embed_dim": 256,
+        "decoder_depth": 4,
+        "decoder_num_heads": 4
+      },
+      "policy": "per-lead-uniform-decimal-floor-visible-count-v2",
+      "pooling": "official-ST-MEM-mean-patch-tokens-before-final-norm-excluding-SEP",
+      "parameters": 24653303
+    },
+    {
+      "run": "20261012T015715Z_stmem_pilot_small_seed42_6a402c48",
+      "source_manifest_sha256": true,
+      "train_ecg_ids": true,
+      "validation_ecg_ids": true,
+      "reconstruction_validation_ecg_ids": true,
+      "lead_order": true,
+      "class_order": true,
+      "source_preprocessing": true,
+      "versions": {
+        "torch": "2.5.1+cu121",
+        "numpy": "2.4.6",
+        "pandas": "3.0.6"
+      },
+      "pretrain_optimizer": {
+        "name": "AdamW",
+        "lr": 0.0003,
+        "betas": [
+          0.9,
+          0.95
+        ],
+        "weight_decay": 0.05,
+        "grad_clip": 1.0,
+        "warmup_steps": 100,
+        "schedule": "warmup + cosine to 0.1*base_lr"
+      },
+      "probe_optimizer": {
+        "name": "AdamW",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "loss": "BCEWithLogitsLoss",
+        "steps": 300,
+        "threshold": 0.5,
+        "seed": 142
+      },
+      "architecture": {
+        "embed_dim": 384,
+        "depth": 12,
+        "num_heads": 6,
+        "decoder_embed_dim": 256,
+        "decoder_depth": 4,
+        "decoder_num_heads": 4
+      },
+      "policy": "per-lead-uniform-decimal-floor-visible-count-v2",
+      "pooling": "official-ST-MEM-mean-patch-tokens-before-final-norm-excluding-SEP",
+      "parameters": 24653303
+    },
+    {
+      "run": "20261012T020821Z_stmem_pilot_small_seed42_e721c834",
+      "source_manifest_sha256": true,
+      "train_ecg_ids": true,
+      "validation_ecg_ids": true,
+      "reconstruction_validation_ecg_ids": true,
+      "lead_order": true,
+      "class_order": true,
+      "source_preprocessing": true,
+      "versions": {
+        "torch": "2.5.1+cu121",
+        "numpy": "2.4.6",
+        "pandas": "3.0.6"
+      },
+      "pretrain_optimizer": {
+        "name": "AdamW",
+        "lr": 0.0003,
+        "betas": [
+          0.9,
+          0.95
+        ],
+        "weight_decay": 0.05,
+        "grad_clip": 1.0,
+        "warmup_steps": 100,
+        "schedule": "warmup + cosine to 0.1*base_lr"
+      },
+      "probe_optimizer": {
+        "name": "AdamW",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "loss": "BCEWithLogitsLoss",
+        "steps": 300,
+        "threshold": 0.5,
+        "seed": 142
+      },
+      "architecture": {
+        "embed_dim": 384,
+        "depth": 12,
+        "num_heads": 6,
+        "decoder_embed_dim": 256,
+        "decoder_depth": 4,
+        "decoder_num_heads": 4
+      },
+      "policy": "per-lead-uniform-decimal-floor-visible-count-v2",
+      "pooling": "official-ST-MEM-mean-patch-tokens-before-final-norm-excluding-SEP",
+      "parameters": 24727278
+    },
+    {
+      "run": "20261012T022307Z_stmem_pilot_small_seed42_789ee220",
+      "source_manifest_sha256": true,
+      "train_ecg_ids": true,
+      "validation_ecg_ids": true,
+      "reconstruction_validation_ecg_ids": true,
+      "lead_order": true,
+      "class_order": true,
+      "source_preprocessing": true,
+      "versions": {
+        "torch": "2.5.1+cu121",
+        "numpy": "2.4.6",
+        "pandas": "3.0.6"
+      },
+      "pretrain_optimizer": {
+        "name": "AdamW",
+        "lr": 0.0003,
+        "betas": [
+          0.9,
+          0.95
+        ],
+        "weight_decay": 0.05,
+        "grad_clip": 1.0,
+        "warmup_steps": 100,
+        "schedule": "warmup + cosine to 0.1*base_lr"
+      },
+      "probe_optimizer": {
+        "name": "AdamW",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "loss": "BCEWithLogitsLoss",
+        "steps": 300,
+        "threshold": 0.5,
+        "seed": 142
+      },
+      "architecture": {
+        "embed_dim": 384,
+        "depth": 12,
+        "num_heads": 6,
+        "decoder_embed_dim": 256,
+        "decoder_depth": 4,
+        "decoder_num_heads": 4
+      },
+      "policy": "per-lead-uniform-decimal-floor-visible-count-v2",
+      "pooling": "official-ST-MEM-mean-patch-tokens-before-final-norm-excluding-SEP",
+      "parameters": 24727278
+    },
+    {
+      "run": "20261012T023822Z_stmem_pilot_small_seed42_cbebaa10",
+      "source_manifest_sha256": true,
+      "train_ecg_ids": true,
+      "validation_ecg_ids": true,
+      "reconstruction_validation_ecg_ids": true,
+      "lead_order": true,
+      "class_order": true,
+      "source_preprocessing": true,
+      "versions": {
+        "torch": "2.5.1+cu121",
+        "numpy": "2.4.6",
+        "pandas": "3.0.6"
+      },
+      "pretrain_optimizer": {
+        "name": "AdamW",
+        "lr": 0.0003,
+        "betas": [
+          0.9,
+          0.95
+        ],
+        "weight_decay": 0.05,
+        "grad_clip": 1.0,
+        "warmup_steps": 100,
+        "schedule": "warmup + cosine to 0.1*base_lr"
+      },
+      "probe_optimizer": {
+        "name": "AdamW",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "loss": "BCEWithLogitsLoss",
+        "steps": 300,
+        "threshold": 0.5,
+        "seed": 142
+      },
+      "architecture": {
+        "embed_dim": 384,
+        "depth": 12,
+        "num_heads": 6,
+        "decoder_embed_dim": 256,
+        "decoder_depth": 4,
+        "decoder_num_heads": 4
+      },
+      "policy": "per-lead-uniform-decimal-floor-visible-count-v2",
+      "pooling": "official-ST-MEM-mean-patch-tokens-before-final-norm-excluding-SEP",
+      "parameters": 24727278
+    }
+  ],
+  "plain_versions": {
+    "numpy": "2.4.6",
+    "pandas": "3.0.6",
+    "matplotlib": "3.11.2",
+    "torch": "2.5.1+cu121",
+    "scikit-learn": "1.9.1"
+  },
+  "plain_profile": {
+    "train_n": 5000,
+    "val_n": null,
+    "batch": 32,
+    "steps": 1000,
+    "eval_n": 128,
+    "probe_steps": 300,
+    "probe_batch": 256,
+    "enc_dim": 192,
+    "enc_depth": 6,
+    "enc_heads": 6,
+    "dec_dim": 128,
+    "dec_depth": 2,
+    "dec_heads": 4
+  },
+  "plain_pretrain_optimizer": {
+    "name": "AdamW",
+    "lr": 0.0003,
+    "betas": [
+      0.9,
+      0.95
+    ],
+    "weight_decay": 0.05,
+    "warmup_steps": 100,
+    "schedule": "warmup + cosine to 0.1*base_lr",
+    "grad_clip": 1.0
+  },
+  "plain_probe_optimizer": {
+    "name": "AdamW",
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "loss": "BCEWithLogitsLoss"
+  },
+  "steps": 1000,
+  "effective_batch": 32,
+  "sampled_training_ecgs": 5000,
+  "training_ecg_exposures": 32000,
+  "mean_exposures_per_ecg": 6.4,
+  "caveat": "Equal updates and ECG exposure do not mean matched compute, backbone, masks, or pooling. No causal attribution to one component."
+}

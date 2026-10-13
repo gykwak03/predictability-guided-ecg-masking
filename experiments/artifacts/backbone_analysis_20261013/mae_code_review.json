@@ -1,0 +1,76 @@
+{
+  "kind": "PlainECGMAE-implementation-review",
+  "date": "2026-10-13",
+  "model_source": "experiments/Masking_pilot.ipynb",
+  "scope": [
+    "Lead-major, time-minor patch layout and encoder/decoder positional indexing",
+    "Visible-only encoder selection and decoder restoration with different masks per batch item",
+    "Masked patch loss compared independently with a masked raw-sample MSE",
+    "Prediction-path input Jacobian: zero at hidden input samples, nonzero at visible samples",
+    "Finite, nonzero gradients and actual parameter updates in the full pilot model",
+    "Train/eval inference consistency and inference batch-size consistency",
+    "Optimizer/scheduler order, train/validation separation, frozen linear probe and checkpoint replay"
+  ],
+  "test_results": {
+    "existing_masking_and_comparison_tests": {
+      "passed": 39,
+      "seconds": 74.33,
+      "warnings": "10 pre-existing non-interactive Matplotlib show warnings"
+    },
+    "additional_code_review_tests": {
+      "passed": 14,
+      "seconds": 5.93,
+      "patch_lengths": [50, 125, 250],
+      "mask_ratios": [0.5, 0.75, 0.9],
+      "full_pilot_initializations": ["legacy", "independent"],
+      "full_pilot_model": {
+        "patch_samples": 50,
+        "enc_dim": 192,
+        "enc_depth": 6,
+        "enc_heads": 6,
+        "dec_dim": 128,
+        "dec_depth": 2,
+        "dec_heads": 4
+      }
+    },
+    "environment": {
+      "device": "cpu",
+      "torch": "2.14.1+cpu",
+      "historical_server_torch": "2.5.1+cu121"
+    }
+  },
+  "findings": {
+    "learning_blocking_implementation_error_found": false,
+    "previous_initialization_issue": {
+      "observation": "Historical TransformerEncoder layers began with identical values, but separate parameter storage.",
+      "current_policy": "New runs default to independent Transformer-block Xavier initialization; old profiles without the key still use legacy initialization for checkpoint compatibility.",
+      "causality": "No evidence yet that this explains the population-scale pilot failure. The two-ECG checks learned with both policies."
+    },
+    "valid_design_choices_requiring_empirical_optimization": [
+      "Learned random lead/time positional embeddings; the original image MAE uses fixed sin-cos position embeddings.",
+      "Global attention across lead-time tokens in the decoder.",
+      "Small encoder/decoder and a 1,000-update pilot training budget.",
+      "Final token LayerNorm followed by mean pooling for the frozen linear probe."
+    ],
+    "learning_rate_review": {
+      "steps": 1000,
+      "warmup_steps": 100,
+      "first_update_lr": 0.000003,
+      "peak_lr": 0.0003,
+      "scheduler_endpoint_lr": 0.00003,
+      "order": "optimizer.step before scheduler.step; history.lr is next-update LR, history.lr_used is actual update LR when diagnostics are enabled"
+    }
+  },
+  "production_model_changes_this_review": [],
+  "test_source": "tests/test_masking_pilot.py",
+  "limits": [
+    "Passing correctness tests does not establish optimal architecture or hyperparameters.",
+    "The added full-size forward/backward checks ran on local CPU, not the historical CUDA environment.",
+    "No new 5,000-ECG pretraining run or unseen-ECG generalization claim was made.",
+    "Input isolation is checked on the already preprocessed ECG tensors used by both backbones."
+  ],
+  "primary_references": [
+    "https://github.com/facebookresearch/mae/blob/main/models_mae.py",
+    "https://docs.pytorch.org/docs/2.14/generated/torch.nn.TransformerEncoder.html"
+  ]
+}

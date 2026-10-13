@@ -1,0 +1,54 @@
+{
+  "kind": "two-train-ECGs-new-random-mask-each-update",
+  "device": "cpu",
+  "initialization": "legacy",
+  "steps": 1000,
+  "learning_rate": 0.0003,
+  "schedule": "constant",
+  "ecg_ids": [
+    11,
+    22
+  ],
+  "initial": {
+    "masked_samples": 135000,
+    "masked_mse": 1.2820220585229798,
+    "zero_masked_mse": 1.006575607385098,
+    "skill_vs_zero": -0.27364705553857194,
+    "pred_rms": 0.5199217928654231,
+    "target_rms": 1.0032824165633014,
+    "rms_ratio": 0.5182207764055027,
+    "pred_std": 0.512320135010204,
+    "target_std": 1.0032331131104792,
+    "mean_bias": 0.07863561999167866,
+    "masked_correlation": -0.006702541353702024
+  },
+  "final": {
+    "masked_samples": 1485000,
+    "masked_mse": 0.013925616209832226,
+    "zero_masked_mse": 1.0013463147597292,
+    "skill_vs_zero": 0.9860931068456834,
+    "pred_rms": 0.9921420487872326,
+    "target_rms": 1.000672930961825,
+    "rms_ratio": 0.9914748546596611,
+    "pred_std": 0.9921284964364231,
+    "target_std": 1.0006729308795983,
+    "mean_bias": 0.005172876190882012,
+    "masked_correlation": 0.9930369137331938
+  },
+  "caveat": "Different training-mask policy only versus legacy fixed-mask tiny audit; does not establish generalization to unseen ECGs.",
+  "heldout_mask_final": {
+    "masked_samples": 1440000,
+    "masked_mse": 0.014087087339913425,
+    "zero_masked_mse": 1.0010126722854296,
+    "skill_vs_zero": 0.985927163831252,
+    "pred_rms": 0.9912103952557111,
+    "target_rms": 1.0005062080194354,
+    "rms_ratio": 0.9907088904704291,
+    "pred_std": 0.9911946210121104,
+    "target_std": 1.000506202687559,
+    "mean_bias": 0.005488750948549821,
+    "masked_correlation": 0.9929563846994569
+  },
+  "heldout_mask_repeats": "10000..10031; training used repeats 1..1000",
+  "final_mask_repeats": "0..32; repeats 1..32 were encountered once during training"
+}

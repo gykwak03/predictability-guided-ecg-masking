@@ -1,0 +1,53 @@
+{
+  "kind": "inference-only-held-out-mask-check-on-the-same-two-training-ECGs",
+  "checkpoint_updated": false,
+  "device": "cpu",
+  "source": "model_audit_20261013",
+  "caveat": "This assesses mask generalization on memorized ECGs, not ECG-level generalization or downstream performance.",
+  "results": [
+    {
+      "initialization": "independent",
+      "evaluation": "trained_fixed_mask",
+      "ecgs": 2,
+      "masks_per_ecg": 1,
+      "masked_mse": 0.004772119302450918,
+      "zero_masked_mse": 0.9854726829719862,
+      "skill_vs_zero": 0.995157532638998,
+      "mean_rms_ratio": 0.9967153343642121,
+      "mean_correlation": 0.9975908524623395
+    },
+    {
+      "initialization": "independent",
+      "evaluation": "32_unseen_masks",
+      "ecgs": 2,
+      "masks_per_ecg": 32,
+      "masked_mse": 0.0915364307165498,
+      "zero_masked_mse": 1.0018423657530962,
+      "skill_vs_zero": 0.9086319027367735,
+      "mean_rms_ratio": 0.9639371233561409,
+      "mean_correlation": 0.9533359624399405
+    },
+    {
+      "initialization": "legacy",
+      "evaluation": "trained_fixed_mask",
+      "ecgs": 2,
+      "masks_per_ecg": 1,
+      "masked_mse": 0.004770309782823982,
+      "zero_masked_mse": 0.9854726829719862,
+      "skill_vs_zero": 0.9951593688336061,
+      "mean_rms_ratio": 0.992247945077294,
+      "mean_correlation": 0.9976085044009096
+    },
+    {
+      "initialization": "legacy",
+      "evaluation": "32_unseen_masks",
+      "ecgs": 2,
+      "masks_per_ecg": 32,
+      "masked_mse": 0.08677922752377845,
+      "zero_masked_mse": 1.0018423657530962,
+      "skill_vs_zero": 0.913380357539037,
+      "mean_rms_ratio": 0.9448299062901594,
+      "mean_correlation": 0.9560571735411726
+    }
+  ]
+}

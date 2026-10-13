@@ -67,6 +67,65 @@ def test_different_initialization_policies_cannot_be_pooled(modules, tmp_path):
     assert not (tmp_path / "bad").exists()
 
 
+def test_different_model_capacities_cannot_be_pooled(modules, tmp_path):
+    comparison, _ = modules
+    runs = [saved_run(tmp_path, 42, 0.78), saved_run(tmp_path, 43, 0.80)]
+    for run, dimension in zip(runs, [192, 384]):
+        path = run / "run_config.json"
+        config = json.loads(path.read_text(encoding="utf-8"))
+        config["profile"]["enc_dim"] = dimension
+        path.write_text(json.dumps(config), encoding="utf-8")
+    with pytest.raises(ValueError, match="different subsets, evaluation masks"):
+        comparison.summarize_runs(runs, tmp_path / "bad")
+    assert not (tmp_path / "bad").exists()
+
+
+@pytest.mark.parametrize("seeds", [None, [42, 43]])
+def test_cli_propagates_model_size_for_single_and_multiseed(modules, monkeypatch, tmp_path, seeds):
+    import sys
+    comparison, _ = modules
+    runner = importlib.import_module("run_masking_pilot")
+    calls = []
+
+    def record_run(**kwargs):
+        calls.append(kwargs)
+        return {"RUN_DIR": tmp_path / f"seed{kwargs['seed']}"}
+
+    monkeypatch.setattr(runner, "run_notebook", record_run)
+    monkeypatch.setattr(comparison, "summarize_runs", lambda *args, **kwargs: None)
+    argv = ["run_masking_pilot.py", "--train", "--mode", "pilot", "--model-size", "stmem-small",
+            "--initialization", "legacy", "--output-root", str(tmp_path)]
+    if seeds:
+        argv.extend(["--seeds", *map(str, seeds)])
+    monkeypatch.setattr(sys, "argv", argv)
+    runner.main()
+    assert [call["seed"] for call in calls] == (seeds or [42])
+    assert all(call["model_size"] == "stmem-small" and call["initialization"] == "legacy" for call in calls)
+
+
+def test_scaled_checkpoint_records_size_and_replays_with_saved_dimensions(modules, tmp_path):
+    _, inspector = modules
+    ns = inspector.run_notebook(mode="smoke", model_size="stmem-small", initialization="legacy",
+                                train=True, steps=1, diagnostics_enabled=False, random_probe=False,
+                                output_root=tmp_path / "scaled", quiet=True)
+    run = ns["RUN_DIR"]
+    config = json.loads((run / "run_config.json").read_text(encoding="utf-8"))
+    assert config["model_size"] == "stmem-small"
+    assert config["architecture"] == dict(enc_dim=384, enc_depth=12, enc_heads=6,
+                                           dec_dim=256, dec_depth=4, dec_heads=4)
+    checkpoint = ns["torch"].load(run / "p125_r75/checkpoint.pt", map_location="cpu", weights_only=True)
+    assert checkpoint["model_size"] == "stmem-small"
+    assert checkpoint["profile"] == config["profile"]
+    assert config["profile"]["initialization"] == "legacy"
+    before = pd.read_csv(run / "results.csv").iloc[0]
+    assert before.model_size == "stmem-small"
+    assert before.parameters > 24_000_000
+    del checkpoint
+    report = inspector.inspect_run(run, output_dir=tmp_path / "inspection", examples=0, probe=False)
+    after = pd.read_csv(report / "results.csv").iloc[0]
+    assert after.validation_masked_mse == pytest.approx(before.validation_masked_mse, abs=2e-7)
+
+
 def test_saved_ecg_id_order_restored_and_missing_ids_rejected(modules):
     _, inspector = modules
     frame = pd.DataFrame(dict(ecg_id=[50, 20, 30]))

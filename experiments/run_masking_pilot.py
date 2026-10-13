@@ -19,9 +19,11 @@ def run_notebook(*, mode="smoke", train=False, seed=42,
                  artifact_dir=None, output_root=None, quiet=False, steps=None,
                  patch_samples=None, mask_ratio=None, diagnostics_enabled=True,
                  random_probe=True, subset_seed=None, eval_mask_seed=None, mask_ratios=None,
-                 initialization=None):
+                 initialization=None, model_size=None):
     if initialization not in {None, "legacy", "independent"}:
         raise ValueError("initialization must be legacy or independent")
+    if model_size not in {None, "baseline", "stmem-small"}:
+        raise ValueError("model_size must be baseline or stmem-small")
     if steps is not None and (not isinstance(steps, int) or steps < 1):
         raise ValueError("steps must be a positive integer")
     if mask_ratios is not None:
@@ -52,6 +54,10 @@ def run_notebook(*, mode="smoke", train=False, seed=42,
                 source = source.replace('MODE = "smoke"', f"MODE = {mode!r}", 1)
                 source = source.replace("RUN_TRAINING = False", f"RUN_TRAINING = {train!r}", 1)
                 source = source.replace("SEED = 42", f"SEED = {seed!r}", 1)
+                if model_size is not None:
+                    if 'MODEL_SIZE = "baseline"' not in source:
+                        raise RuntimeError("Model-size config interface changed; update runner and notebook together")
+                    source = source.replace('MODEL_SIZE = "baseline"', f"MODEL_SIZE = {model_size!r}", 1)
                 if initialization is not None:
                     source = source.replace('INITIALIZATION = "independent"',
                                             f"INITIALIZATION = {initialization!r}", 1)
@@ -88,6 +94,8 @@ def main():
     parser.add_argument("--mode", choices=["smoke", "pilot"], default="smoke")
     parser.add_argument("--train", action="store_true")
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--model-size", choices=["baseline", "stmem-small"],
+                        help="Default: baseline; stmem-small matches ST-MEM small encoder/decoder widths, depths and heads")
     parser.add_argument("--initialization", choices=["legacy", "independent"],
                         help="Default: independent Xavier initialization of Transformer blocks; legacy reproduces old runs")
     parser.add_argument("--seeds", type=int, nargs="+", help="Run paired repeats, e.g. 42 43 44; requires --train")
@@ -147,7 +155,7 @@ def main():
                                   output_root=suite, steps=args.steps,
                                   patch_samples=args.patch_samples, mask_ratio=args.mask_ratio,
                                   subset_seed=subset_seed, eval_mask_seed=eval_seed, mask_ratios=args.mask_ratios,
-                                  initialization=args.initialization)
+                                  initialization=args.initialization, model_size=args.model_size)
             runs.append(result["RUN_DIR"])
             summarize_runs(runs, suite, expected_seeds=args.seeds)
         print("Completed seed comparison. Output:", suite, flush=True)
@@ -158,7 +166,7 @@ def main():
                           steps=args.steps, patch_samples=args.patch_samples, mask_ratio=args.mask_ratio,
                           diagnostics_enabled=not args.no_diagnostics, random_probe=not args.no_random_probe,
                           subset_seed=args.subset_seed, eval_mask_seed=args.eval_mask_seed, mask_ratios=args.mask_ratios,
-                          initialization=args.initialization)
+                          initialization=args.initialization, model_size=args.model_size)
     if args.tiny_overfit:
         if not result["TRAINING_AVAILABLE"]:
             parser.error("Install PyTorch and scikit-learn before tiny overfit")
@@ -180,7 +188,8 @@ def main():
         config_path = directory / "run_config.json"
         config = json.loads(config_path.read_text(encoding="utf-8"))
         config.update(profile=result["PROFILE"], source_manifest_sha256=result["SOURCE_MANIFEST_SHA256"],
-                      device=str(result["DEVICE"]))
+                      device=str(result["DEVICE"]), model_size=result["MODEL_SIZE"],
+                      architecture=result["ARCHITECTURE"])
         result["diagnostics"].write_json(config_path, config)
         print("Completed tiny overfit. Output:", directory, flush=True)
         return

@@ -1,0 +1,75 @@
+{
+  "kind": "PlainECGMAE-capacity-count-not-performance-experiment",
+  "model_counts": [
+    {
+      "model_size": "baseline",
+      "patch_samples": 50,
+      "architecture": {
+        "enc_dim": 192,
+        "enc_depth": 6,
+        "enc_heads": 6,
+        "dec_dim": 128,
+        "dec_depth": 2,
+        "dec_heads": 4
+      },
+      "parameters": 3127282,
+      "profile": {
+        "train_n": 5000,
+        "val_n": null,
+        "batch": 32,
+        "steps": 1000,
+        "eval_n": 128,
+        "probe_steps": 300,
+        "probe_batch": 256,
+        "enc_dim": 192,
+        "enc_depth": 6,
+        "enc_heads": 6,
+        "dec_dim": 128,
+        "dec_depth": 2,
+        "dec_heads": 4,
+        "initialization": "independent"
+      }
+    },
+    {
+      "model_size": "stmem-small",
+      "patch_samples": 50,
+      "architecture": {
+        "enc_dim": 384,
+        "enc_depth": 12,
+        "enc_heads": 6,
+        "dec_dim": 256,
+        "dec_depth": 4,
+        "dec_heads": 4
+      },
+      "parameters": 24624818,
+      "profile": {
+        "train_n": 5000,
+        "val_n": null,
+        "batch": 32,
+        "steps": 1000,
+        "eval_n": 128,
+        "probe_steps": 300,
+        "probe_batch": 256,
+        "enc_dim": 384,
+        "enc_depth": 12,
+        "enc_heads": 6,
+        "dec_dim": 256,
+        "dec_depth": 4,
+        "dec_heads": 4,
+        "initialization": "independent"
+      }
+    }
+  ],
+  "stmem_small_parameters": 24624278,
+  "stmem_small_architecture": {
+    "embed_dim": 384,
+    "depth": 12,
+    "num_heads": 6,
+    "decoder_embed_dim": 256,
+    "decoder_depth": 4,
+    "decoder_num_heads": 4
+  },
+  "scaled_to_baseline_ratio": 7.87419171024551,
+  "scaled_vs_stmem_parameter_difference": 540,
+  "note": "Only PlainECGMAE dimensions change. Counts differ from ST-MEM because embedding/SEP/norm structures differ. No new population-scale pretraining result."
+}
