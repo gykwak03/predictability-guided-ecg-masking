@@ -1,0 +1,6 @@
+{
+  "initialization": "legacy",
+  "encoder_layers_identical_at_initialization": true,
+  "decoder_layers_identical_at_initialization": true,
+  "note": "Identical initial values do not imply shared parameters or establish a cause."
+}
