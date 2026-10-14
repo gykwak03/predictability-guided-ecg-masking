@@ -1,0 +1,4 @@
+model,recorded_rows,excluded_fixed_position_rows,rows_with_missing_gradient,zero_update_rows,all_numeric_finite
+MAE baseline,336,0,0,0,True
+MAE enlarged,504,0,0,0,True
+ST-MEM small,546,42,0,0,True

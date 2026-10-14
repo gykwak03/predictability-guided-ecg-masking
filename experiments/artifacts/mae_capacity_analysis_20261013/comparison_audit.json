@@ -1,0 +1,64 @@
+{
+  "comparable_checks": {
+    "source_manifest_sha256": true,
+    "train_ecg_ids": true,
+    "validation_ecg_ids": true,
+    "reconstruction_validation_ecg_ids": true,
+    "diagnostic_train_ecg_ids": true,
+    "diagnostic_validation_ecg_ids": true,
+    "linear_baseline_train_ecg_ids": true,
+    "class_order": true,
+    "lead_order": true,
+    "source_preprocessing": true,
+    "policy": true,
+    "pooling": true,
+    "pretrain_optimizer": true,
+    "probe_optimizer": true,
+    "diagnostics_config": true,
+    "evaluation_mask_seed": true,
+    "non_architecture_profile": true,
+    "initialization_policy": true,
+    "torch_version": true,
+    "per_ecg_mask_metadata": true
+  },
+  "capacity_ratio": 7.87419171024551,
+  "mse_change": -0.00016148347556765863,
+  "skill_change_pp": 0.016197037094240006,
+  "trained_auroc_change_pp": 0.7371510259252645,
+  "random_auroc_change_pp": 1.4931732367628792,
+  "training_time_ratio": 4.22783135019719,
+  "gpu_peak_ratio": 3.9104851682323747,
+  "gradient_checks": [
+    {
+      "model": "MAE baseline",
+      "recorded_rows": 336,
+      "excluded_fixed_position_rows": 0,
+      "rows_with_missing_gradient": 0,
+      "zero_update_rows": 0,
+      "all_numeric_finite": true
+    },
+    {
+      "model": "MAE enlarged",
+      "recorded_rows": 504,
+      "excluded_fixed_position_rows": 0,
+      "rows_with_missing_gradient": 0,
+      "zero_update_rows": 0,
+      "all_numeric_finite": true
+    },
+    {
+      "model": "ST-MEM small",
+      "recorded_rows": 546,
+      "excluded_fixed_position_rows": 42,
+      "rows_with_missing_gradient": 0,
+      "zero_update_rows": 0,
+      "all_numeric_finite": true
+    }
+  ],
+  "observation": "Scaling width/depth alone did not meaningfully improve reconstruction at seed 42, legacy initialization, and 1000 updates. Larger random features already improve AUROC. No causal attribution to a single remaining component.",
+  "limits": [
+    "One seed; no significance claim.",
+    "ST-MEM has a different masking policy (76% actual vs MAE 75%).",
+    "Larger MAE independent initialization and longer population pretraining remain untested.",
+    "Checkpoint weights and raw reconstruction arrays were excluded by Git; this analysis uses saved summaries and histories."
+  ]
+}

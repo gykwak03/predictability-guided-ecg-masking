@@ -1,0 +1,10 @@
+model,seed,patch_samples,mask_ratio,status,mode,model_size,patch_seconds,total_tokens,visible_tokens,parameters,steps,train_ecgs,labeled_train_ecgs,validation_ecgs,validation_masked_mse,train_seconds,probe_seconds,pretrain_wall_seconds,periodic_diagnostic_seconds,diagnostic_seconds,random_probe_seconds,gpu_peak_allocated_mb,macro_auroc,macro_auprc,macro_f1,valid_metric_classes,validation_zero_masked_mse,validation_skill_vs_zero,validation_rms_ratio,validation_masked_correlation,validation_linear_masked_mse,clipping_fraction,random_encoder_macro_auroc,auroc_gain_vs_random,random_encoder_macro_auprc,auprc_gain_vs_random,random_encoder_macro_f1,f1_gain_vs_random,condition_seconds,error_reduction_percent,prediction_target_rms_percent,auroc_gain_pp,auprc_gain_pp,f1_gain_pp,random_encoder_source
+stmem-small,42,50,0.5,not_run,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+stmem-small,42,50,0.75,completed,pilot,stmem-small,0.2,600.0,150.0,24624818.0,1000.0,5000.0,4904.0,2146.0,0.9916431131934323,415.9655668670312,66.92733865696937,417.6232787873596,1.6577119203284385,10.357737465761602,67.1426257872954,3241.69482421875,0.785968827042125,0.5773725704576774,0.5572190704971606,5.0,0.9969939231982946,0.0053669434490604,0.0815175554654375,0.0736770443116355,0.4451317720697434,0.011,0.7875668658412516,-0.0015980387991265,0.5668603380773914,0.0105122323802859,0.5597700908760748,-0.0025510203789141,564.951261587441,0.53669434490604,8.15175554654375,-0.15980387991265,1.05122323802859,-0.25510203789141,recorded paired probe with archived initial state on server
+stmem-small,42,50,0.9,not_run,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+stmem-small,42,125,0.5,not_run,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+stmem-small,42,125,0.75,not_run,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+stmem-small,42,125,0.9,not_run,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+stmem-small,42,250,0.5,not_run,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+stmem-small,42,250,0.75,not_run,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+stmem-small,42,250,0.9,not_run,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

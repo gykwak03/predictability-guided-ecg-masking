@@ -102,7 +102,8 @@ def main():
     parser.add_argument("--subset-seed", type=int, help="Fix ECG subsets independently of model seed")
     parser.add_argument("--eval-mask-seed", type=int, help="Fix validation masks independently of model seed")
     parser.add_argument("--artifact-dir", type=Path)
-    parser.add_argument("--output-root", type=Path)
+    parser.add_argument("--output-root", type=Path,
+                        help="Default: this repository's experiments/artifacts/masking_pilot (scaled model: mae_stmem_size_pilot)")
     parser.add_argument("--steps", type=int, help="Override MAE updates; recorded in the run config")
     parser.add_argument("--patch-samples", type=int, choices=[50, 125, 250])
     parser.add_argument("--mask-ratio", type=float, help="Together with --patch-samples, run one condition")
@@ -142,7 +143,8 @@ def main():
         from datetime import datetime, timezone
         import uuid
         from pilot_comparison import summarize_runs
-        root = (args.output_root or NOTEBOOK.parent / "artifacts/masking_pilot").resolve()
+        family = "mae_stmem_size_pilot" if args.model_size == "stmem-small" else "masking_pilot"
+        root = (args.output_root or NOTEBOOK.parent / "artifacts" / family).resolve()
         suite = root / (datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
                         + "_multiseed_" + uuid.uuid4().hex[:8])
         suite.mkdir(parents=True)

@@ -1,0 +1,58 @@
+{
+  "status": "completed",
+  "seconds": 9.40600000001723,
+  "score_masks": 12,
+  "difficulty_counts": {
+    "Easy": 4,
+    "Medium": 4,
+    "Hard": 4
+  },
+  "neural_first_batch_sha256": {
+    "cnn": "36dccdeaf30a789b533ac1ea1ae31ec2ecce35b1ad34eb93d6d571bf37ae2f04",
+    "transformer": "36dccdeaf30a789b533ac1ea1ae31ec2ecce35b1ad34eb93d6d571bf37ae2f04"
+  },
+  "neural_train_sequence_sha256": {
+    "cnn": "f7caf987d4c3e37b237e4e804e00cd2a431a784fd801d411de66dbdbece4c8ed",
+    "transformer": "f7caf987d4c3e37b237e4e804e00cd2a431a784fd801d411de66dbdbece4c8ed"
+  },
+  "test_opened": false,
+  "estimator_quality": [
+    {
+      "estimator": "ridge",
+      "split": "score",
+      "parameters": 2028,
+      "masks": 12,
+      "pooled_nrmse": 1.3179574721438934,
+      "zero_pooled_nrmse": 1.0072458163058275,
+      "skill_vs_zero": -0.7121107297070775,
+      "mean_case_nrmse": 1.3172312433423061,
+      "mean_case_pearson": 0.47512241404541294,
+      "mean_case_r2": -0.7151189138647457
+    },
+    {
+      "estimator": "cnn",
+      "split": "score",
+      "parameters": 11228,
+      "masks": 12,
+      "pooled_nrmse": 1.0098433130789974,
+      "zero_pooled_nrmse": 1.0072458163058275,
+      "skill_vs_zero": -0.005164272629236688,
+      "mean_case_nrmse": 1.009435767200691,
+      "mean_case_pearson": 0.05701494528569395,
+      "mean_case_r2": -0.005266150416259875
+    },
+    {
+      "estimator": "transformer",
+      "split": "score",
+      "parameters": 16466,
+      "masks": 12,
+      "pooled_nrmse": 1.0950041957992567,
+      "zero_pooled_nrmse": 1.0072458163058275,
+      "skill_vs_zero": -0.18184527226069203,
+      "mean_case_nrmse": 1.0946780273077945,
+      "mean_case_pearson": 0.006052180950775567,
+      "mean_case_r2": -0.18246400379219532
+    }
+  ],
+  "interpretation": "Smoke groups check code only. Pilot groups require estimator learning review and seed/budget robustness checks before research claims."
+}

@@ -58,6 +58,8 @@ def test_scaled_size_only_changes_architecture(plain_config_definitions, mode):
                     dec_dim=128, dec_depth=2, dec_heads=4) if mode == "pilot" else dict(
                         enc_dim=32, enc_depth=1, enc_heads=4, dec_dim=32, dec_depth=1, dec_heads=4)
     assert original["ARCHITECTURE"] == expected
+    assert original["OUTPUT_ROOT"] == ROOT / "experiments/artifacts/masking_pilot"
+    assert scaled["OUTPUT_ROOT"] == ROOT / "experiments/artifacts/mae_stmem_size_pilot"
     with pytest.raises(ValueError, match="model size"):
         plain_config_definitions(mode, "unknown")
 

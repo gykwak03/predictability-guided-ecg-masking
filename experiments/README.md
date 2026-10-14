@@ -1,5 +1,48 @@
 # Mask 단위 확정 pilot
 
+## 앞으로의 서버 실행과 Git 결과 저장
+
+`experiments/submit_pilot.sh`는 서버의 기존 `run_stmem.sbatch`에서 GPU·계정·파티션
+설정만 재사용하고, 결과를 **현재 clone의 `experiments/artifacts/` 아래**에 저장합니다.
+실행 파일이나 결과 경로를 clone 밖의 예전 파일로 지정하지 않습니다.
+서버의 clone 루트에서 다음처럼 제출하세요. 별도 `--output-root`는 전달하지 않습니다.
+
+```bash
+bash experiments/submit_pilot.sh mae \
+  --model-size stmem-small --initialization legacy \
+  --steps 1000 --seed 42 --subset-seed 42 --eval-mask-seed 42 \
+  --patch-samples 50 --mask-ratio 0.75
+```
+
+기존 MAE는 `--model-size baseline`, ST-MEM은 다음처럼 실행합니다.
+
+```bash
+bash experiments/submit_pilot.sh stmem \
+  --model-size small --steps 1000 --seed 42 \
+  --patch-samples 50 --mask-ratio 0.75
+```
+
+| 실행 | 결과 기본 경로, clone 루트 기준 |
+| --- | --- |
+| 기존 MAE, single/multi-seed | `experiments/artifacts/masking_pilot/` |
+| 확대 MAE, single/multi-seed | `experiments/artifacts/mae_stmem_size_pilot/` |
+| ST-MEM | `experiments/artifacts/st_mem_pilot/` |
+
+Python runner를 GPU 노드에서 직접 실행할 때도 `--output-root`를 생략하면 같은
+저장소 내부 기본 경로를 사용합니다. Runner의 명시적 경로 override는 유지하지만,
+새 Slurm submitter는 `--output-root`를 차단하여 항상 저장소 안에 저장합니다.
+기존 서버 root의 `run_stmem.sbatch`를 직접 실행하면 그 파일에 적힌 예전 외부 경로가
+사용될 수 있으므로, 앞으로는 위 submitter를 사용하세요.
+
+기본 template은 clone 부모의 `run_stmem.sbatch`, Python은
+`/data/gykwak03/envs/ecg-mask-pilot/bin/python`입니다. 경로가 다른 서버에서는
+`PILOT_SBATCH_TEMPLATE`, `PILOT_PYTHON` 환경변수로 지정할 수 있습니다.
+로그는 기존 서버 `logs/mae_JOBID.log` 또는 `logs/stmem_JOBID.log`로 저장합니다.
+
+결과의 CSV·JSON·곡선 PNG는 `.gitignore`에서 허용돼 있으므로 완료 후
+`git add experiments/artifacts`, `git commit`, `git push`하고 로컬에서 `git pull`합니다.
+Git은 자동 commit/push하지 않습니다. Checkpoint와 NPY/NPZ 파형 배열은 계속 제외합니다.
+
 ## 기본 MAE를 ST-MEM small 크기로 확대
 
 `run_masking_pilot.py --model-size stmem-small`은 PlainECGMAE의 encoder/decoder
@@ -32,14 +75,35 @@ patch/mask, subset/evaluation seed, batch 32, 1,000 update를 사용합니다.
   --steps 1000 --seed 42 --subset-seed 42 --eval-mask-seed 42 \
   --patch-samples 50 --mask-ratio 0.75 \
   --artifact-dir /data/gykwak03/capstone2/ptbxl_250hz \
-  --output-root /data/gykwak03/capstone2/results/mae_stmem_size_pilot
+  --output-root /data/gykwak03/capstone2/predictability-guided-ecg-masking/experiments/artifacts/mae_stmem_size_pilot
 ```
 
 이 실험은 모델 용량을 늘렸을 때의 효과를 확인합니다. ST-MEM과는 mask 정책·위치
 embedding·decoder 구조 등이 여전히 다르므로, ST-MEM의 우위가 용량 때문인지
-단독으로 확정하는 실험은 아닙니다. GPU population pilot의 성능 결과는 아직 없고,
-로컬에서는 두 초기화의 full-size forward/backward·가중치 갱신과
-1-update smoke 학습·checkpoint 저장/재평가를 확인했습니다.
+단독으로 확정하는 실험은 아닙니다. 로컬에서는 두 초기화의 full-size
+forward/backward·가중치 갱신과 1-update smoke 학습·checkpoint 저장/재평가를 확인했습니다.
+
+2026-10-13 서버의 patch 50 / nominal mask 75%, seed 42, legacy, 1,000 update 결과:
+
+| 지표 | 기존 MAE | 확대 MAE | ST-MEM small |
+| --- | --- | --- | --- |
+| Validation masked MSE | 0.991805 | 0.991643 | 0.741784 |
+| Zero 예측 대비 오차 감소 | 0.5205% | 0.5367% | 25.8676% |
+| Prediction / target RMS | 0.0761 | 0.0815 | 0.5093 |
+| Masked correlation | 0.0723 | 0.0737 | 0.5087 |
+| Trained encoder macro AUROC | 0.7786 | 0.7860 | 0.8035 |
+| Random encoder macro AUROC | 0.7726 | 0.7876 | 0.7439 |
+| Pretraining AUROC gain | +0.5962 pp | -0.1598 pp | +5.9529 pp |
+
+두 MAE의 train/validation ECG IDs, 평가 mask seed·생성 규칙·per-ECG 메타데이터,
+optimizer·schedule·batch/update, 초기화 정책을 맞췄습니다. 크기만 키워서는 이
+1-seed/1,000-update 조건의 복원 부진이 해소되지 않았습니다. 확대 MAE의 train도
+MSE 약 0.99이므로 validation만 나쁜 overfitting 패턴이 아닙니다.
+AUROC의 절대 상승은 더 큰 random encoder의 성능 상승보다 작아 SSL 이득이 확인되지 않습니다.
+ST-MEM은 실제 mask 76%와 lead별 mask/decoder를 사용하므로 architecture-only 비교가 아닙니다.
+남은 초기화·학습 budget·위치 embedding·mask/decoder 요인의 원인은 아직 분리하지 않았습니다.
+원본 결과는 `artifacts/mae_stmem_size_pilot/20261013T140035Z_pilot_seed42_c50d99c2/`,
+비교 표·곡선·검증 기록은 `artifacts/mae_capacity_analysis_20261013/`에 있습니다.
 
 ## 기본 ECG-MAE의 초기화와 결과 보관 (2026-10-13 점검)
 
@@ -61,7 +125,7 @@ python -u run_masking_pilot.py --mode pilot --tiny-overfit --tiny-steps 1000 \
   --allow-cpu-tiny-overfit --initialization independent \
   --patch-samples 50 --mask-ratio 0.75 --subset-seed 42 --eval-mask-seed 42 \
   --artifact-dir /data/gykwak03/capstone2/ptbxl_250hz \
-  --output-root /data/gykwak03/capstone2/results/plain_model_audit/independent
+  --output-root /data/gykwak03/capstone2/predictability-guided-ecg-masking/experiments/artifacts/plain_model_audit/independent
 ```
 
 같은 명령에서 `--initialization legacy` 및 별도 output root로 이전 초기화와 비교합니다.
@@ -88,12 +152,13 @@ Git은 `experiments/artifacts/`의 CSV·JSON·Markdown과 학습/진단/gradient
 곡선 PNG를 추적할 수 있습니다. Checkpoint, NPY/NPZ 파형·예측 배열, 복원 예시 PNG와
 `preprocessing/artifacts/`의 원본 전처리 데이터는 계속 제외합니다. 기존 기록도
 직접 add/commit/push해야 원격 저장소에 반영되며, ignore 변경은 서버 파일을 다운로드하지 않습니다.
-서버 명령의 `/data/gykwak03/capstone2/results/`는 clone 밖이므로 먼저 로컬 repository의
-`experiments/artifacts/`로 옮겨야 Git으로 관리할 수 있습니다.
+과거 서버 명령이 저장한 `/data/gykwak03/capstone2/results/`는 clone 밖이므로,
+기존 결과만 `experiments/artifacts/`로 옮겨야 Git으로 관리할 수 있습니다.
+새 실행은 위 submitter 또는 저장소 내부 기본 경로를 사용하여 이 복사 과정을 생략합니다.
 
-2026-10-13 로컬 확인 당시 기존 MAE의 9조건·3-seed·진단 결과는 있었지만,
-ST-MEM의 `st_mem_grid_v2` 9조건 결과 폴더는 없었습니다. 대화에 붙여 넣은 결과표만으로는
-전체 checkpoint/파형/설정 파일까지 내려받았다고 확인할 수 없습니다.
+현재 기존 MAE의 9조건·3-seed·진단 기록, ST-MEM `st_mem_grid_v2` 9조건 기록,
+확대 MAE의 1조건 pilot 기록을 받았습니다. Git에서 제외한 서버 checkpoint/NPZ까지
+모두 내려받았다는 의미는 아닙니다.
 
 ## ST-MEM 기본 모델 실행 (새 경로)
 
@@ -125,7 +190,7 @@ scp -P 30080 "$stmemExperiments\ST_MEM_pilot.ipynb" `
     "$stmemExperiments\st_mem_adapter.py" `
     "$stmemExperiments\Masking_pilot.ipynb" `
     "$stmemExperiments\masking_diagnostics.py" `
-    "gykwak03@moana.khu.ac.kr:/data/gykwak03/capstone2/experiments/"
+    "gykwak03@moana.khu.ac.kr:/data/gykwak03/capstone2/predictability-guided-ecg-masking/experiments/"
 ```
 
 서버 예시: `/data/gykwak03/capstone2/ST-MEM`에 upstream을 별도 clone하고,
@@ -143,9 +208,9 @@ sbatch --account=ugrad_advisor_x \
   --nodes=1 --ntasks=1 --nodelist=moana-u2 \
   --gres=gpu:normal:1 --cpus-per-task=4 --mem=16G \
   --time=04:00:00 \
-  --chdir=/data/gykwak03/capstone2/experiments \
+  --chdir=/data/gykwak03/capstone2/predictability-guided-ecg-masking/experiments \
   --output=/data/gykwak03/capstone2/logs/stmem_%j.log \
-  --wrap="srun /data/gykwak03/envs/ecg-mask-pilot/bin/python -u run_st_mem_pilot.py --mode pilot --train --model-size small --batch-size 4 --accum-steps 8 --steps 1000 --patch-samples 50 --mask-ratio 0.75 --st-mem-repo /data/gykwak03/capstone2/ST-MEM --artifact-dir /data/gykwak03/capstone2/ptbxl_250hz --output-root /data/gykwak03/capstone2/results/st_mem_pilot"
+  --wrap="srun /data/gykwak03/envs/ecg-mask-pilot/bin/python -u run_st_mem_pilot.py --mode pilot --train --model-size small --batch-size 4 --accum-steps 8 --steps 1000 --patch-samples 50 --mask-ratio 0.75 --st-mem-repo /data/gykwak03/capstone2/ST-MEM --artifact-dir /data/gykwak03/capstone2/ptbxl_250hz --output-root /data/gykwak03/capstone2/predictability-guided-ecg-masking/experiments/artifacts/st_mem_pilot"
 ```
 
 4시간은 실행 상한이며 예상 소요 시간이 아닙니다. 실제 GPU 실행·VRAM은 아직 확인하지 않았습니다.
@@ -162,7 +227,7 @@ Runner는 한 번에 한 조건을 실행합니다. 여러 조건은 아래처�
 전체 train 데이터로 학습하는 명령이 아니며, 조건마다 새 실행 폴더에 저장합니다.
 
 ```bash
-cd /data/gykwak03/capstone2/experiments
+cd /data/gykwak03/capstone2/predictability-guided-ecg-masking/experiments
 for patch in 50 125 250; do
   for ratio in 0.50 0.75 0.90; do
     sbatch --job-name="stmem-p${patch}-r${ratio}" run_stmem.sbatch \
@@ -251,7 +316,7 @@ ST-MEM checkpoint는 `config`와 `step`을 갖는 별도 형식이며 optimizer/
 ```bash
 python experiments/run_masking_pilot.py --mode pilot --train \
   --artifact-dir /your/path/ptbxl_250hz \
-  --output-root /your/output/masking_pilot --seed 42
+  --output-root experiments/artifacts/masking_pilot --seed 42
 ```
 
 Notebook에서는 `MODE="pilot"`, `RUN_TRAINING=True`, `ARTIFACT_DIR_OVERRIDE`, 필요시
@@ -341,7 +406,7 @@ PyTorch의 layer 초기값 clone과 clipping 의미는
 python -u run_masking_pilot.py --mode pilot --tiny-overfit --tiny-steps 200 \
   --patch-samples 50 --mask-ratio 0.75 \
   --artifact-dir /data/gykwak03/capstone2/ptbxl_250hz \
-  --output-root /data/gykwak03/capstone2/results/masking_diagnostics
+  --output-root /data/gykwak03/capstone2/predictability-guided-ecg-masking/experiments/artifacts/masking_diagnostics
 ```
 
 CPU에서는 `--mode smoke`로 작은 모델을 검사할 수 있지만, full pilot 모델 검증을 대체하지 않습니다.
@@ -354,7 +419,7 @@ CPU에서는 `--mode smoke`로 작은 모델을 검사할 수 있지만, full pi
 python -u run_masking_pilot.py --mode pilot --train \
   --patch-samples 50 --mask-ratio 0.75 \
   --artifact-dir /data/gykwak03/capstone2/ptbxl_250hz \
-  --output-root /data/gykwak03/capstone2/results/masking_diagnostics
+  --output-root /data/gykwak03/capstone2/predictability-guided-ecg-masking/experiments/artifacts/masking_diagnostics
 ```
 
 `--steps 3000`을 추가하면 해당 조건을 더 오래 학습합니다. 이때 schedule도 3,000 update 길이에 맞추므로
@@ -435,7 +500,128 @@ python pilot_comparison.py /path/to/run_seed42 /path/to/run_seed43 /path/to/run_
 
 표본·평가 mask·모델/학습/평가 설정이 다른 실행이나 같은 조건/seed 중복은 합산을 차단합니다.
 
-## 검증
+## Mask predictability: Ridge / 1D CNN / Small Transformer
+
+`run_predictability.py`는 세 estimator 학습부터 공통 mask 평가, lead × time map,
+Spearman·consensus·disagreement, 전체 mask의 Easy/Medium/Hard 3등분까지 실행합니다.
+모델·지표·난이도 함수는 `predictability_estimators.py`에 있습니다.
+
+기본 조건은 **P=50 samples (250 Hz에서 0.2초), masking ratio=0.50**입니다.
+ST-MEM의 이 조건은 validation MSE=0.3913, macro AUROC=0.8068이고,
+기본 MAE의 AUROC=0.7752도 해당 grid 최고값 0.7799에 가까워 두 모델에 공통으로 쓸
+탐색 조건으로 선택했습니다. ST-MEM의 AUROC만 보면 P125/r50=0.8138이 더 높지만
+이때 MSE=0.4350이고 기본 MAE는 P125에서 AUROC가 낮았습니다.
+MSE와 AUROC가 비례한다거나 이 조건이 최종 최적값이라는 의미는 아닙니다.
+`--patch-samples 50/125/250` 및 `--mask-ratio`로 바꿀 수 있고 실제 hidden 비율도 기록합니다.
+
+### 데이터·입력·학습 규칙
+
+- 원래 train folds 1–8의 **환자**를 seed 기반 80/20으로 나눕니다. 80%에서 estimator-fit ECG를,
+  20%에서 mask score ECG를 선택하므로 두 pool의 환자가 겹치지 않습니다.
+  기본 pilot은 fit 5,000 ECG, score 512 ECG이며, validation fold 9의 128 ECG는 학습 진단만 합니다.
+  Test 배열은 열지 않습니다. fit/score/validation ECG 수 `0`은 각 reserved pool 전체를 뜻합니다.
+- fit ECG당 4개, score ECG당 8개의 random **전체 lead-time mask**를 만듭니다.
+  P50/r50에서는 600 patch 중 정확히 300개를 가립니다. 특정 lead 하나만 가리는 과제가 아닙니다.
+  mask마다 ECG ID·repeat·seed·bit digest를 CSV에 기록하며 순서를 바꿔도 동일 mask를 재생성할 수 있습니다.
+  학습 및 평가 mask bank는 세 estimator가 공유하고 CNN/Transformer는 같은 batch 순서를 사용합니다.
+- 모든 estimator가 내부에서 hidden 값을 0으로 제거하고 explicit visibility를 입력에 포함합니다.
+  mask 변경 없이 hidden 값만 바꾸어도 예측은 같아야 합니다. Loss와 지표는 hidden sample만 사용합니다.
+- Ridge는 train target이 가려진 sample만으로 lead별 선형 회귀를 학습합니다. 입력은 다른 lead의 같은 시점,
+  전체 lead의 lag `[-2P, -P, -1, 0, 1, P, 2P]` visible 값·availability·intercept입니다.
+  시간 전체에서 계수를 공유합니다. 값·availability에 대한 선형 모델이며 mask마다 계수를 새로 fit하는 모델은 아닙니다.
+  기본 각 fit mask에서 32개 time point를 추출하며 정규화된 목적함수는
+  `mean(masked squared error) + alpha * ||w||²`, alpha=1e-3, intercept 제외입니다.
+  CNN·Transformer처럼 모든 time target을 매 update 사용하는 것은 아니며 이 차이를 config에 기록합니다.
+- CNN은 12 lead를 channel로 보고 visible/availability 24 channel에서 width 64,
+  kernel 7 residual convolution 4개(dilation 1/2/4/8)를 사용합니다.
+  Small Transformer는 raw patch+visibility를 width 128로 투영해 4 block/4 head의 전역 attention,
+  fixed sinusoidal time position 및 learned lead embedding으로 복원합니다. ST-MEM/기본 MAE와는 별도 estimator입니다.
+- neural pilot 기본 batch 16, 각 3,000 update, AdamW 3e-4, weight decay 1e-4,
+  warmup 후 cosine LR, gradient clip 1입니다. 학습 곡선은 저장하지만 validation으로 checkpoint를 선택하지 않습니다.
+  마지막 모델을 평가합니다. 이것은 동일 학습 budget의 첫 탐색이며 estimator별 충분한 학습을 보장하지 않습니다.
+
+NRMSE 분모 `sigma_c`는 **선택된 estimator-fit ECG만** 이용해 lead별로 ECG×time의
+population std를 한 번 계산한 값입니다. target patch 자체의 std로 나누지 않습니다.
+현재 입력은 per-record/lead z score이므로 std는 대략 1이며 mV 단위가 아닙니다.
+전체 mask NRMSE는 `sqrt(mean_hidden_samples(((prediction-target)/sigma_c)^2))`,
+lead-time patch NRMSE는 해당 lead patch의 같은 계산입니다.
+masked R²/Pearson도 lead별 std로 표준화한 hidden sample을 pooling하며 평탄 target의 미정 값은 빈 값/null입니다.
+
+### 순위·난이도·map 정의
+
+각 estimator의 **score ECG-mask 전체 분포**에서 ascending NRMSE average rank를 계산하고
+`predictability = 100 * (N - rank + 0.5) / N`으로 변환합니다. 작을수록 낮은 오차,
+높을수록 쉬운 mask입니다. 동률은 동일 percentile이고 모든 값이 같으면 50입니다.
+세 percentile의 동일 가중 평균이 consensus, population std 및 max-min이 disagreement입니다.
+세 estimator의 결과가 모두 있어야 consensus를 생성하며 누락·NaN error·중복 결과는 차단합니다.
+Spearman은 동일 mask들의 NRMSE 순위 간 rho이며 상수 입력은 미정입니다.
+한 ECG의 여러 mask가 종속이므로 단순 mask 수를 독립 표본으로 간주한 p-value는 제공하지 않습니다.
+
+Consensus 내림차순으로 전체 score mask를 정렬해 Easy/Medium/Hard로 3등분합니다.
+그룹 크기는 최대 1개 차이이며 consensus 동률은 mask_id로 순서를 정합니다.
+경계에서 동률 mask가 나뉘면 난이도 차이의 증거가 아니므로 tie 수를 함께 기록합니다.
+전역 3등분은 ECG·class·lead 구성을 맞추지 않으므로 그룹별 구성 및 ECG coverage CSV를 꼭 확인하세요.
+후속 MAE 비교에서는 각 그룹이 같은 ECG를 충분히 공유하도록 표본을 맞추고,
+같은 backbone·총 masked tokens·updates·optimizer·probe로 비교해야 합니다.
+모든 train ECG의 mask를 이 코드의 score subset 결과로 정의할 수는 없습니다.
+fit ECG까지 포함해 난이도를 정의하려면 추가 patient cross-fitting이 필요합니다.
+
+Map은 **score mask에서 해당 lead/time patch가 hidden이었던 경우만** 집계합니다.
+각 estimator의 전체 hidden **patch** NRMSE 분포에서 percentile을 구하고 lead×time 평균을 그립니다.
+전체 mask 난이도용 percentile과 patch-map용 percentile은 서로 다른 ranking population입니다.
+빈 coverage는 미정이며 visible-copy 점수를 넣지 않습니다. consensus map은 세 map의 평균입니다.
+개별 mask의 hidden patch map 예시도 저장합니다.
+
+### 실행과 결과
+
+로컬 CPU에서 코드 흐름을 확인합니다. smoke 결과는 연구의 난이도 확정 근거가 아닙니다.
+
+```powershell
+.\.venv\Scripts\python.exe -u experiments\run_predictability.py --mode smoke
+```
+
+서버에서 clone 루트로 이동하고 최신 코드를 받은 뒤 GPU 작업으로 제출합니다.
+`submit_pilot.sh`는 기존 `/data/gykwak03/capstone2/run_stmem.sbatch`의 GPU·partition·account 지시문을
+재사용하며 결과는 clone 내부에 저장합니다. 기존 sbatch 본문의 ST-MEM 실행 코드는 사용하지 않습니다.
+
+```bash
+cd /data/gykwak03/capstone2/predictability-guided-ecg-masking
+git pull
+bash experiments/submit_pilot.sh predictability \
+  --patch-samples 50 --mask-ratio 0.50 \
+  --seed 42 --subset-seed 42 --mask-seed 42 \
+  --steps 3000 --fit-ecgs 5000 --score-ecgs 512 \
+  --train-masks 4 --score-masks 8
+```
+
+로그는 `../logs/predictability_JOBID.log`, 결과는
+`experiments/artifacts/predictability/<UTC timestamp>_pilot_seed42_<id>/`에 저장됩니다.
+결과 파일은 다음과 같습니다.
+
+| 파일 | 내용 |
+| --- | --- |
+| `run_config.json`, `ecg_selection.csv`, `*_mask_bank.csv` | 전처리 hash·고정 train std·pool/seed·공통 mask 재현 정보 |
+| `mask_metrics.csv`, `estimator_summary.csv` | mask별 NRMSE/R²/Pearson/0 예측 대비 개선 및 pooled 요약 |
+| `*_learning_history.csv`, `estimator_learning_curves.png` | 0 update~final validation NRMSE·skill |
+| `mask_difficulty.csv` | mask별 세 NRMSE·percentile·consensus·disagreement·Easy/Medium/Hard |
+| `easy_masks.csv`, `medium_masks.csv`, `hard_masks.csv` | 후속 실험용 mask ID·ECG ID·재현 seed 목록 |
+| `spearman_correlations.csv`, `difficulty_definition.json` | estimator rank agreement·난이도 정의·tie/분포 진단 |
+| `difficulty_groups.csv`, `ecg_group_coverage.csv`, `difficulty_lead_coverage.csv` | 그룹별 ECG·class·lead 구성 |
+| `lead_time_predictability.csv`, `lead_time_predictability_curves.png` | lead×time 평균 map·hidden 관측 수 |
+| `example_predictability_curves.png` | 공통 평가 mask 하나의 hidden patch map |
+| `completion.json` | 완료 여부·총 시간·품질 지표·공통 첫 batch 및 전체 train sampling sequence hash |
+
+CSV/JSON/curves PNG는 현재 Git ignore 규칙상 저장할 수 있습니다. `.pt`/`.npz` weights,
+packed masks 및 patch error cache는 Git에서 제외됩니다. CSV seed/digest로 mask를 재현할 수 있습니다.
+후속 코드에서는 `predictability_estimators.masks_from_bank(pd.read_csv(bank_path), 600)`으로
+P50 mask bank를 복원하고 digest를 검증할 수 있습니다. P125는 240, P250은 120 token입니다.
+서버에서 `git add experiments/artifacts/predictability`, commit/push 후 로컬 pull하면 작은 결과가 전달됩니다.
+분류 AUROC는 이 estimator 단계에서 계산하지 않습니다. 후속 동일 MAE의 난이도별 표현 학습 실험에서 평가합니다.
+
+선형 회귀 목적함수와 rank 상관 정의는 [scikit-learn Ridge](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html),
+[SciPy Spearman](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.spearmanr.html) 문서를 참고합니다.
+
+## 테스트
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest tests -q

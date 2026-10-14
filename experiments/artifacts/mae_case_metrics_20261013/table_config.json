@@ -1,0 +1,46 @@
+{
+  "summary_date": "2026-10-14",
+  "original_grid_run": "C:\\Users\\gykwa\\kyunghee2026\\capstonedesign2\\predictability-guided-ecg-masking\\experiments\\artifacts\\masking_pilot\\20261008T010245Z_pilot_seed42_33f3976c",
+  "enlarged_run": "C:\\Users\\gykwa\\kyunghee2026\\capstonedesign2\\predictability-guided-ecg-masking\\experiments\\artifacts\\mae_stmem_size_pilot\\20261013T140035Z_pilot_seed42_c50d99c2",
+  "baseline_cases": 9,
+  "enlarged_completed_cases": 1,
+  "seed": 42,
+  "profile": {
+    "train_n": 5000,
+    "val_n": null,
+    "batch": 32,
+    "steps": 1000,
+    "eval_n": 128,
+    "probe_steps": 300,
+    "probe_batch": 256,
+    "enc_dim": 192,
+    "enc_depth": 6,
+    "enc_heads": 6,
+    "dec_dim": 128,
+    "dec_depth": 2,
+    "dec_heads": 4
+  },
+  "model_initialization": "legacy",
+  "reconstruction_ecgs": 128,
+  "mask_repeats": 3,
+  "original_classification_scores_preserved": true,
+  "max_checkpoint_mse_drift": 2.009874623398744e-07,
+  "source_manifest_sha256": "47d6a05598767244e6b24ee7b27410b5ebbc26875fcbd57ea5d7a4bc7e182bba",
+  "current_torch": "2.14.1+cpu",
+  "random_encoder_sources": {
+    "50": "recorded paired diagnostic, same seed/profile (legacy)",
+    "125": "regenerated seed/config under current CPU PyTorch; historical identity unverified",
+    "250": "regenerated seed/config under current CPU PyTorch; historical identity unverified"
+  },
+  "caveats": [
+    "Enlarged model has only p50/r75 completed; all other cells are unmeasured.",
+    "p125/p250 random encoders were regenerated, not archived historical initial states.",
+    "One-seed table and the separate three-seed summary must not be pooled.",
+    "No MAE retraining; only saved-checkpoint inference and frozen-random-encoder linear probes."
+  ],
+  "implementation_sha256": {
+    "Masking_pilot.ipynb": "bc2c52dc56cd698139c377a953496e64725ae45f56ce606a770a99151a22966d",
+    "masking_diagnostics.py": "381233e8cbb33c40043a722713d10bef5f778e6945b6523dadf8e5e7934a57ad",
+    "inspect_masking_pilot.py": "aad844584f9baf2f9014f649c0b0ce97c83307f86b41fb2594465b944d08ca1d"
+  }
+}

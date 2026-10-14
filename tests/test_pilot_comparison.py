@@ -103,6 +103,27 @@ def test_cli_propagates_model_size_for_single_and_multiseed(modules, monkeypatch
     assert all(call["model_size"] == "stmem-small" and call["initialization"] == "legacy" for call in calls)
 
 
+def test_multiseed_scaled_default_output_stays_in_repository(modules, monkeypatch, tmp_path):
+    import sys
+    comparison, _ = modules
+    runner = importlib.import_module("run_masking_pilot")
+    monkeypatch.setattr(runner, "NOTEBOOK", tmp_path / "experiments/Masking_pilot.ipynb")
+    calls = []
+
+    def record_run(**kwargs):
+        calls.append(kwargs)
+        return {"RUN_DIR": kwargs["output_root"] / f"seed{kwargs['seed']}"}
+
+    monkeypatch.setattr(runner, "run_notebook", record_run)
+    monkeypatch.setattr(comparison, "summarize_runs", lambda *args, **kwargs: None)
+    monkeypatch.setattr(sys, "argv", ["run_masking_pilot.py", "--train", "--model-size", "stmem-small",
+                                     "--seeds", "42", "43"])
+    runner.main()
+    expected = tmp_path / "experiments/artifacts/mae_stmem_size_pilot"
+    assert len(calls) == 2
+    assert all(call["output_root"].parent == expected for call in calls)
+
+
 def test_scaled_checkpoint_records_size_and_replays_with_saved_dimensions(modules, tmp_path):
     _, inspector = modules
     ns = inspector.run_notebook(mode="smoke", model_size="stmem-small", initialization="legacy",

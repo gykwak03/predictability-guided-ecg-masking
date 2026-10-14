@@ -1,0 +1,15 @@
+{
+  "masked_samples": 8640000,
+  "masked_mse": 0.9874619551152474,
+  "zero_masked_mse": 0.9990468584335045,
+  "skill_vs_zero": 0.011595955905834177,
+  "pred_rms": 0.11581214444689321,
+  "target_rms": 0.999523315602745,
+  "rms_ratio": 0.11586737661747763,
+  "pred_std": 0.11581014788670937,
+  "target_std": 0.9995233117215798,
+  "mean_bias": 0.0005919520946490117,
+  "masked_correlation": 0.107974812005839,
+  "linear_masked_mse": 0.4370945949852396,
+  "linear_skill_vs_zero": 0.562488394517751
+}
