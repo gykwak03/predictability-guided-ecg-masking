@@ -1,0 +1,16 @@
+{
+  "ranking_population": "held-out train ECG-mask cases only",
+  "high_predictability": "easier",
+  "percentile": "100 * (N - average_ascending_NRMSE_rank + 0.5) / N",
+  "consensus": "equal-weight mean of ridge/cnn/transformer predictability percentiles",
+  "disagreement_std": "population std of the three percentiles; units: percentile points",
+  "disagreement_range": "max minus min of the three percentiles",
+  "groups": "sort consensus descending, mask_id ascending; array_split into Easy/Medium/Hard",
+  "tied_consensus_masks": 1163,
+  "tie_policy": "deterministic mask_id order; tied cases may straddle boundaries, with no evidence of different difficulty",
+  "ecgs_present_in_all_groups": 110,
+  "total_score_ecgs": 512,
+  "sampling_warning": "Global tertiles do not guarantee the same ECG/class/lead distribution in all groups.",
+  "spearman_inference": "Descriptive rho only: masks from one ECG are dependent; no naive per-mask p-values.",
+  "status": "exploratory single-seed groups; inspect estimator learning/zero baseline before downstream MAE comparison"
+}

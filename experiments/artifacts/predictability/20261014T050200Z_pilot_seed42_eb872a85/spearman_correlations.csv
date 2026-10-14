@@ -1,0 +1,4 @@
+estimator_a,estimator_b,spearman_rho,masks,undefined_constant_input
+ridge,cnn,0.8031898011957735,4096,False
+ridge,transformer,0.7872037073886369,4096,False
+cnn,transformer,0.8932553760063313,4096,False
