@@ -1,0 +1,194 @@
+{
+  "status": "inconclusive",
+  "whole_mask_inclusion_status": "inconclusive",
+  "whole_mask_inclusion_gates": {
+    "enough_patients": true,
+    "sufficient_contexts": true,
+    "enough_valid_rank_patients": true,
+    "stable_inclusion_ranking": false,
+    "confirmation_group_gap": true
+  },
+  "ecgs": 64,
+  "patients": 64,
+  "gates": {
+    "enough_patients": true,
+    "enough_valid_rank_patients": true,
+    "sufficient_contexts": true,
+    "few_forced_tie_boundaries": false,
+    "stable_consensus": true,
+    "hard_overlap_above_chance": true,
+    "three_estimator_ordering": true,
+    "gap_above_shuffle": true,
+    "estimator_rank_replication": true
+  },
+  "metrics": {
+    "consensus_spearman": {
+      "mean": 0.9866459293017106,
+      "valid_patients": 64,
+      "ci95_low": 0.9855933852804796,
+      "ci95_high": 0.9875922021296923
+    },
+    "hard_overlap": {
+      "mean": 0.9424218750000001,
+      "valid_patients": 64,
+      "ci95_low": 0.93703125,
+      "ci95_high": 0.94765625
+    },
+    "chance_hard_overlap": {
+      "mean": 0.3333333333333333,
+      "valid_patients": 64,
+      "ci95_low": 0.3333333333333333,
+      "ci95_high": 0.3333333333333333
+    },
+    "all_estimators_ordered": {
+      "mean": 1.0,
+      "valid_patients": 64,
+      "ci95_low": 1.0,
+      "ci95_high": 1.0
+    },
+    "mean_estimator_gap_above_null": {
+      "mean": 0.5447942693027794,
+      "valid_patients": 64,
+      "ci95_low": 0.5196149768328218,
+      "ci95_high": 0.5713114122458145
+    },
+    "energy_spearman": {
+      "mean": 0.8103626222641958,
+      "valid_patients": 64,
+      "ci95_low": 0.7946601707522214,
+      "ci95_high": 0.8253655074116679
+    },
+    "tie_boundary_fraction": {
+      "mean": 0.109375,
+      "valid_patients": 64,
+      "ci95_low": 0.04648437500000002,
+      "ci95_high": 0.203125
+    },
+    "inclusion_consensus_spearman": {
+      "mean": 0.036660388588999365,
+      "valid_patients": 64,
+      "ci95_low": 0.026523317058141763,
+      "ci95_high": 0.0470799692582125
+    },
+    "mean_inclusion_group_gap": {
+      "mean": 0.0008788179978728296,
+      "valid_patients": 64,
+      "ci95_low": 0.0006258205483900384,
+      "ci95_high": 0.001140655229217373
+    },
+    "ridge_spearman": {
+      "mean": 0.9852811283850786,
+      "valid_patients": 64,
+      "ci95_low": 0.9840927155136193,
+      "ci95_high": 0.9863691536946977
+    },
+    "ridge_energy_adjusted_spearman": {
+      "mean": 0.9376231843699565,
+      "valid_patients": 64,
+      "ci95_low": 0.9326622405982377,
+      "ci95_high": 0.9427384912874758
+    },
+    "ridge_gap": {
+      "mean": 0.6668680209948074,
+      "valid_patients": 64,
+      "ci95_low": 0.6413824518231667,
+      "ci95_high": 0.6924845163958735
+    },
+    "ridge_hard_easy_ratio": {
+      "mean": 5.12878566408452,
+      "valid_patients": 64,
+      "ci95_low": 4.768304802830219,
+      "ci95_high": 5.463937937166417
+    },
+    "ridge_energy_only_gap": {
+      "mean": 0.6362633962928244,
+      "valid_patients": 64,
+      "ci95_low": 0.6097071415700859,
+      "ci95_high": 0.6630852106614884
+    },
+    "ridge_inclusion_spearman": {
+      "mean": 0.042712460065764374,
+      "valid_patients": 64,
+      "ci95_low": 0.03197994710698476,
+      "ci95_high": 0.05386122474276649
+    },
+    "cnn_spearman": {
+      "mean": 0.9803223793677204,
+      "valid_patients": 64,
+      "ci95_low": 0.9784431159227178,
+      "ci95_high": 0.9819999323565829
+    },
+    "cnn_energy_adjusted_spearman": {
+      "mean": 0.9676200315834209,
+      "valid_patients": 64,
+      "ci95_low": 0.9647525771772976,
+      "ci95_high": 0.9703635886184753
+    },
+    "cnn_gap": {
+      "mean": 0.45713288570761557,
+      "valid_patients": 64,
+      "ci95_low": 0.43012425969777696,
+      "ci95_high": 0.4851152135813122
+    },
+    "cnn_hard_easy_ratio": {
+      "mean": 4.9218073300865495,
+      "valid_patients": 64,
+      "ci95_low": 4.61276462891694,
+      "ci95_high": 5.221289793529833
+    },
+    "cnn_energy_only_gap": {
+      "mean": 0.3840557602263748,
+      "valid_patients": 64,
+      "ci95_low": 0.3549492839711492,
+      "ci95_high": 0.4135076833201046
+    },
+    "cnn_inclusion_spearman": {
+      "mean": 0.03454182479595079,
+      "valid_patients": 64,
+      "ci95_low": 0.02448173427759437,
+      "ci95_high": 0.04453186014393552
+    },
+    "transformer_spearman": {
+      "mean": 0.9817093328731468,
+      "valid_patients": 64,
+      "ci95_low": 0.9803570073284925,
+      "ci95_high": 0.9828933112270797
+    },
+    "transformer_energy_adjusted_spearman": {
+      "mean": 0.9718289460526278,
+      "valid_patients": 64,
+      "ci95_low": 0.969654352403583,
+      "ci95_high": 0.9737770446931795
+    },
+    "transformer_gap": {
+      "mean": 0.511162082412951,
+      "valid_patients": 64,
+      "ci95_low": 0.4866437633561988,
+      "ci95_high": 0.5377031698966469
+    },
+    "transformer_hard_easy_ratio": {
+      "mean": 4.640494393158212,
+      "valid_patients": 64,
+      "ci95_low": 4.394908018866167,
+      "ci95_high": 4.892046937873612
+    },
+    "transformer_energy_only_gap": {
+      "mean": 0.43355678250584373,
+      "valid_patients": 64,
+      "ci95_low": 0.4064874134205388,
+      "ci95_high": 0.4614994363248992
+    },
+    "transformer_inclusion_spearman": {
+      "mean": 0.03100441221443549,
+      "valid_patients": 64,
+      "ci95_low": 0.0211498550056953,
+      "ci95_high": 0.04111095416406256
+    }
+  },
+  "thresholds": "Exploratory predeclared gates; do not tune after viewing confirmation results.",
+  "interpretation": "Supports repeatable within-ECG patch ranking under this 50% random-context distribution and fixed checkpoints only. Does not prove a causal effect of hiding a patch, a useful masking policy, architecture independence, or downstream improvement.",
+  "energy_check": "Inspect energy-adjusted rank replication and energy-only gap; stable raw error can reflect waveform energy rather than contextual predictability.",
+  "seconds": 91.63659009337425,
+  "test_opened": false,
+  "training_performed": false
+}

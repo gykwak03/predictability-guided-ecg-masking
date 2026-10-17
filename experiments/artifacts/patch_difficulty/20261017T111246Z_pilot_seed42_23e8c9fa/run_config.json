@@ -1,0 +1,40 @@
+{
+  "mode": "pilot",
+  "source_run": "/data/gykwak03/capstone2/predictability-guided-ecg-masking/experiments/artifacts/predictability/20261014T050200Z_pilot_seed42_eb872a85",
+  "source_files_sha256": {
+    "ridge_weights.npz": "b44a44c0fe1f4fd9033e570a45846e0466cd344771e8815a7105eb8ffd8aed4f",
+    "cnn.pt": "50af7d2dfb7e1422c20c4fba9704cb544c397e88ca658160a3fbecc2524c5e7e",
+    "transformer.pt": "ea6ce5d9b8966e581a979e923aa59015ce0b04382e45303a0632e18ac48d5a6f",
+    "run_config.json": "586b66c925b6fe4e12b51b83db383c0b292e0815a2b3e00ab429fe96d636ae03",
+    "ecg_selection.csv": "fa395d829e731080da13df5cef8eacf1b02e1016ef1e9b008290f8dd5a69965f"
+  },
+  "source_manifest_sha256": "47d6a05598767244e6b24ee7b27410b5ebbc26875fcbd57ea5d7a4bc7e182bba",
+  "fixed_train_lead_std": [
+    0.9999999999798033,
+    1.000000000007408,
+    0.9999999999870475,
+    1.000000000022003,
+    0.9999999999437666,
+    1.0000000000201175,
+    0.9999999999972804,
+    0.9999999999949182,
+    1.000000000020057,
+    1.000000000060294,
+    1.0000000000206153,
+    0.9999999999910659
+  ],
+  "patch_samples": 50,
+  "mask_ratio": 0.5,
+  "seed": 42,
+  "pairs_per_bank": 32,
+  "contexts_per_ecg": 128,
+  "hidden_observations_per_patch_per_bank": 32,
+  "score_ecgs": 64,
+  "device": "cuda",
+  "test_opened": false,
+  "training_performed": false,
+  "target": "Conditional hidden-patch reconstruction error under uniform exact-50% contexts",
+  "split_policy": "Same held-out train ECGs in discovery/confirmation, independently generated mask contexts",
+  "rank_policy": "Within ECG, per-estimator pooled NRMSE ascending percentiles, equal-weight consensus; high=hard",
+  "inference_unit": "patient; complementary halves and patches are not independent subjects"
+}
