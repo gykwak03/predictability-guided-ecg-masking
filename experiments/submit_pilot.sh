@@ -3,7 +3,7 @@
 set -euo pipefail
 
 if [[ $# -lt 1 ]]; then
-  printf 'Usage: bash experiments/submit_pilot.sh {mae|stmem|predictability} [runner options]\n' >&2
+  printf 'Usage: bash experiments/submit_pilot.sh {mae|stmem|predictability|patch-difficulty} [runner options]\n' >&2
   exit 2
 fi
 backend=$1
@@ -36,7 +36,11 @@ case "$backend" in
     runner=$experiment_dir/run_predictability.py
     family=predictability
     ;;
-  *) printf 'Choose backend mae, stmem or predictability.\n' >&2; exit 2 ;;
+  patch-difficulty)
+    runner=$experiment_dir/run_patch_difficulty.py
+    family=patch_difficulty
+    ;;
+  *) printf 'Choose backend mae, stmem, predictability or patch-difficulty.\n' >&2; exit 2 ;;
 esac
 template=${PILOT_SBATCH_TEMPLATE:-$server_root/run_stmem.sbatch}
 python_bin=${PILOT_PYTHON:-/data/gykwak03/envs/ecg-mask-pilot/bin/python}
@@ -49,6 +53,8 @@ if ! grep -Eq '^#SBATCH[[:space:]].*(--gres|--gpus)' "$template"; then
   exit 2
 fi
 output_root=$experiment_dir/artifacts/$family
+train_option=(--train)
+if [[ $backend == patch-difficulty ]]; then train_option=(); fi
 log_dir=$server_root/logs
 mkdir -p "$log_dir"
 printf 'Results: %s\n' "$output_root"
@@ -56,7 +62,7 @@ printf 'Results: %s\n' "$output_root"
   printf '#!/bin/bash\n'
   sed -n '/^#SBATCH/p' "$template"
   printf 'set -euo pipefail\n'
-  printf '%q ' srun "$python_bin" -u "$runner" --mode pilot --train \
+  printf '%q ' srun "$python_bin" -u "$runner" --mode pilot "${train_option[@]}" \
     --artifact-dir "$server_root/ptbxl_250hz" "$@" --output-root "$output_root"
   printf '\n'
 } | sbatch --job-name="ecg-$backend" --chdir="$experiment_dir" \

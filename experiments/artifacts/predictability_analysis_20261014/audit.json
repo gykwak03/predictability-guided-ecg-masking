@@ -1,0 +1,60 @@
+{
+  "source_run": "C:\\Users\\gykwa\\kyunghee2026\\capstonedesign2\\predictability-guided-ecg-masking\\experiments\\artifacts\\predictability\\20261014T050200Z_pilot_seed42_eb872a85",
+  "source_manifest_match": true,
+  "score_ecgs": 512,
+  "score_masks": 4096,
+  "estimators": [
+    "ridge",
+    "cnn",
+    "transformer"
+  ],
+  "masks_per_ecg_min": 8,
+  "masks_per_ecg_max": 8,
+  "unique_mask_estimator_pairs": true,
+  "all_finite_nrmse": true,
+  "test_arrays_opened": false,
+  "patient_counts": {
+    "fit": 4696,
+    "score": 506,
+    "validation": 127
+  },
+  "patient_overlap_counts": {
+    "fit_score": 0,
+    "fit_validation": 0,
+    "score_validation": 0
+  },
+  "all_exported_mask_digests_verified": true,
+  "hidden_tokens_min_max": [
+    300,
+    300
+  ],
+  "zero_nrmse_max_abs_error_vs_local_data": 4.440892098500626e-16,
+  "difficulty_labels_recomputed_exact_match": true,
+  "consensus_max_abs_recompute_error": 1.4210854715202004e-14,
+  "score_summary_recomputation": [
+    {
+      "estimator": "cnn",
+      "max_metric_error": 1.1102230246251565e-16
+    },
+    {
+      "estimator": "ridge",
+      "max_metric_error": 0
+    },
+    {
+      "estimator": "transformer",
+      "max_metric_error": 5.551115123125783e-17
+    }
+  ],
+  "ecg_number_of_groups_counts": {
+    "1": 118,
+    "2": 284,
+    "3": 110
+  },
+  "ecgs_present_in_all_groups": 110,
+  "fraction_ecgs_present_in_all_groups": 0.21484375,
+  "all_masks_easy_ecgs": 40,
+  "all_masks_hard_ecgs": 74,
+  "all_masks_medium_ecgs": 4,
+  "tied_consensus_masks": 1163,
+  "ties_crossing_difficulty_boundary": []
+}

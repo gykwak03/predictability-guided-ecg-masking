@@ -1,0 +1,9 @@
+{
+  "first_patch_zero_nrmse": 1.2129402885363514,
+  "last_patch_zero_nrmse": 0.6703409185104547,
+  "interior_zero_nrmse": 1.001220899337143,
+  "first_patch_mean_consensus": 46.253969100736754,
+  "last_patch_mean_consensus": 67.7949636356266,
+  "interior_mean_consensus": 49.71208354304459,
+  "interpretation": "The final 0.2s has lower target RMS, so elevated predictability at the edge can partly reflect low target energy. Cause of this energy pattern has not been isolated."
+}

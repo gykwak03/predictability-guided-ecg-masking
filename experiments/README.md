@@ -621,6 +621,23 @@ P50 mask bank를 복원하고 digest를 검증할 수 있습니다. P125는 240,
 선형 회귀 목적함수와 rank 상관 정의는 [scikit-learn Ridge](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html),
 [SciPy Spearman](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.spearmanr.html) 문서를 참고합니다.
 
+## 같은 ECG 내부의 patch 난이도 (50% masking)
+
+`run_patch_difficulty.py`는 기존 predictability checkpoint를 고정하고, 같은 ECG에
+독립적인 discovery/confirmation 50% mask context를 반복 적용합니다. Patch 자체의
+복원 난이도와 ‘해당 patch가 포함된 전체 mask가 더 어려운가’를 따로 검증합니다.
+추가 학습·test 배열 접근 없이 실행하며, GPU pilot은 다음처럼 제출할 수 있습니다.
+
+```bash
+bash experiments/submit_pilot.sh patch-difficulty \
+  --source-run "$PWD/experiments/artifacts/predictability/20261014T050200Z_pilot_seed42_eb872a85" \
+  --score-ecgs 64 --pairs-per-bank 32 --seed 42
+```
+
+Checkpoint 세 개가 원래 run 폴더에 있어야 합니다. 출력 정의, CPU smoke 명령,
+고정된 pilot 판정 기준과 해석 범위는 [실험 설명](PATCH_DIFFICULTY.md)에 있습니다.
+현재 코드 검증과 실제 ECG의 과학적 검증을 구분합니다.
+
 ## 테스트
 
 ```powershell

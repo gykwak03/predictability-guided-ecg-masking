@@ -54,6 +54,7 @@ def submission_environment(tmp_path):
     ("mae", ["--model-size=stmem-small"], "mae_stmem_size_pilot", "run_masking_pilot.py"),
     ("stmem", ["--model-size", "small"], "st_mem_pilot", "run_st_mem_pilot.py"),
     ("predictability", [], "predictability", "run_predictability.py"),
+    ("patch-difficulty", ["--source-run", "/example/source"], "patch_difficulty", "run_patch_difficulty.py"),
 ])
 def test_submits_correct_backend_and_repository_output(submission_environment, backend, options, family, runner):
     run, capture, arguments, _ = submission_environment
@@ -69,6 +70,7 @@ def test_submits_correct_backend_and_repository_output(submission_environment, b
     assert command[3] == shell_path(ROOT / "experiments" / runner)
     assert command[-2:] == ["--output-root", shell_path(ROOT / "experiments/artifacts" / family)]
     assert command.count("/example/ECG data") == 1
+    assert ("--train" in command) == (backend != "patch-difficulty")
     assert "--chdir=" + shell_path(ROOT / "experiments") in arguments.read_text(encoding="utf-8")
     assert "Submitted batch job 12345" in result.stdout
 

@@ -1,0 +1,3 @@
+mask_id,ecg_id,estimator,lead,patch_index,start_seconds,end_seconds,patch_nrmse,predictability,target_rms,same_time_visible_other_leads,left_same_lead_visible,right_same_lead_visible
+score-e71-m0,71,ridge,V4,26,5.2,5.4,0.043429236859083176,99.13285064697266,0.2326280112722025,4,True,False
+score-e71-m0,71,ridge,III,31,6.2,6.4,1.9206572771072388,0.8333740234375,2.0689510298509166,3,False,True

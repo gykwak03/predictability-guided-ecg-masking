@@ -1,0 +1,22 @@
+{
+  "source_run": "C:\\Users\\gykwa\\kyunghee2026\\capstonedesign2\\predictability-guided-ecg-masking\\experiments\\artifacts\\predictability\\20261014T050200Z_pilot_seed42_eb872a85",
+  "source_manifest_match": true,
+  "ridge_provenance": "deterministic replay of original ridge protocol",
+  "max_case_nrmse_difference_vs_server": 5.773159728050814e-15,
+  "tolerance": 1e-05,
+  "original_neural_patch_cache_available": false,
+  "available_patch_estimators": [
+    "ridge"
+  ],
+  "original_sample_rate_hz": 250,
+  "display_sample_rate_hz": 125,
+  "selected_mask_ids": [
+    "score-e71-m0",
+    "score-e71-m5",
+    "score-e15339-m0",
+    "score-e13160-m1"
+  ],
+  "selection_policy": "saved example ECG 71 and its relatively harder mask; global highest/lowest consensus masks",
+  "percentile_population": "all hidden patch observations per estimator, not whole-mask ranks",
+  "scientific_limit": "ECG labels are dataset annotations; no diagnostic inference or causal attribution to a waveform feature"
+}
