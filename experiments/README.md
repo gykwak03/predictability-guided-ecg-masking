@@ -1,5 +1,29 @@
 # Mask 단위 확정 pilot
 
+## Plain MAE 원인 탐색 (2026-10-26)
+
+과거 복원 부진을 초기화·학습량/스케줄·입력 LayerNorm·위치 정보·decoder·SEP·mask 정책·
+전처리·linear probe로 나누어 점검하는 별도 실행 경로는
+[MAE_CAUSE_STUDY.md](MAE_CAUSE_STUDY.md)에 있습니다. 기존 노트북/과거 결과는 유지합니다.
+실제 GPU 원인 탐색 결과는 아직 없으며, 합성 smoke와 전처리 재생 검증을 구분합니다.
+
+## 현재 선택: ECG-JEPA (2026-10-25)
+
+Sehun Kim의 ECG-JEPA를 사용한 50 Hz 전처리 / patch 길이·mask 비율 pilot은
+[ECG_JEPA_PILOT.md](ECG_JEPA_PILOT.md)에 있습니다. Primary는 50% masking에서
+0.1·0.2·0.5초 비교입니다. 아래 A2000/세 모델 비교 및 과거 40 Hz pilot은 이전 준비 기록입니다.
+현재 ECG-JEPA는 임대 CUDA GPU에서 먼저 profile한 뒤 실행하며,
+공개 checkpoint를 사용하는 추가 사전학습과 scratch 조건 비교를 구분합니다.
+
+## 새 50 Hz 모델 비교 실행 경로 (2026-10-24)
+
+ST-MEM / PatchECG / 최신 SSM 기반 ECG-CPC를 A2000 12GB에서 비교하는 준비와
+실행 명령은 [SOTA_COMPARISON.md](SOTA_COMPARISON.md)에 있습니다.
+새 데이터는 **0.67–50 Hz**의 `ptbxl_250hz_bp067_50`이며,
+아래 과거 pilot의 **0.67–40 Hz** 산출물과 구분합니다.
+먼저 `setup_sota_repos.py`와 별도 환경을 준비한 다음,
+`submit_sota.sh all --mode profile --steps 20`으로 한 GPU에서 세 모델을 순차 검사합니다.
+
 ## 앞으로의 서버 실행과 Git 결과 저장
 
 `experiments/submit_pilot.sh`는 서버의 기존 `run_stmem.sbatch`에서 GPU·계정·파티션

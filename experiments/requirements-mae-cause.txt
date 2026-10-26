@@ -1,0 +1,9 @@
+# Install the CUDA-compatible PyTorch wheel separately (existing pilot uses 2.5.1).
+# These are the existing reviewed server environment versions, not new model dependencies.
+numpy==1.26.4
+pandas==2.2.3
+scipy==1.13.1
+wfdb==4.1.2
+scikit-learn==1.5.2
+matplotlib==3.9.4
+einops==0.8.1

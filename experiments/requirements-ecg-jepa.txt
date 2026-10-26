@@ -1,0 +1,8 @@
+# Install the server's compatible CUDA PyTorch first; no torchvision is needed
+# by our isolated model-only import of the official ECG-JEPA and timm leaves.
+# Then install the utility package separately: pip install --no-deps timm==1.0.8
+numpy==1.26.4
+pandas==2.2.3
+scipy==1.13.1
+scikit-learn==1.5.2
+pytest==8.3.5

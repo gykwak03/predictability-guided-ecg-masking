@@ -1,0 +1,18 @@
+{
+  "ST-MEM": {
+    "url": "https://github.com/vuno/ST-MEM.git",
+    "commit": "311c6446894dee4126db8d2520024e9f62cf1616"
+  },
+  "PatchECG": {
+    "url": "https://github.com/Mitchell-Chatterjee/Robust-Automated-Cardiovascular-Arrhythmia-Detection.git",
+    "commit": "cebef523609f721d9ebb32a7bd3087d43c5ae037"
+  },
+  "ECG_JEPA": {
+    "url": "https://github.com/sehunfromdaegu/ECG_JEPA.git",
+    "commit": "d937ad2c2c8a1e22856ce7e4a23a30f84a71217c"
+  },
+  "ecg-fm-benchmarking": {
+    "url": "https://github.com/AI4HealthUOL/ecg-fm-benchmarking.git",
+    "commit": "238409835ef55358a10bbc3459dfa9aaa91ad5e5"
+  }
+}
