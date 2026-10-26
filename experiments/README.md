@@ -6,6 +6,9 @@
 전처리·linear probe로 나누어 점검하는 별도 실행 경로는
 [MAE_CAUSE_STUDY.md](MAE_CAUSE_STUDY.md)에 있습니다. 기존 노트북/과거 결과는 유지합니다.
 실제 GPU 원인 탐색 결과는 아직 없으며, 합성 smoke와 전처리 재생 검증을 구분합니다.
+계획한 24조건 × 3 seeds와 확장 분류 평가를 모두 실행하는 제출 스크립트는
+[submit_mae_cause_all.sh](submit_mae_cause_all.sh)입니다. 허용된 `MAE_PARTITION`을 지정하며,
+새 `mae_cause_all` 폴더에서 계획·캐시·학습·분석을 진행합니다. 실행법은 위 설명서를 따릅니다.
 
 ## 현재 선택: ECG-JEPA (2026-10-25)
 

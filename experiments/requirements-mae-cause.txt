@@ -1,9 +1,10 @@
 # Install the CUDA-compatible PyTorch wheel separately (existing pilot uses 2.5.1).
-# These are the existing reviewed server environment versions, not new model dependencies.
+# Reference pins for a new environment; do not assume these are installed on Seraph.
 numpy==1.26.4
 pandas==2.2.3
 scipy==1.13.1
-wfdb==4.1.2
+# 4.3.1 includes pandas 3.0 and earlier NumPy 2 compatibility fixes.
+wfdb==4.3.1
 scikit-learn==1.5.2
 matplotlib==3.9.4
 einops==0.8.1

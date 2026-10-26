@@ -100,12 +100,72 @@ zero-phase filtering 이후 파형을 변경하는 검사이므로, 원시 hidde
 
 GPU가 할당된 환경의 Python을 사용한다. 아래 경로는 기존 서버 기준이며 대여 서버에서는
 데이터·저장소 경로를 바꾼다. 준비는 CPU에서도 가능하고, 실제 학습은 CUDA가 필요하다.
-의존성은 기존 pilot 환경(torch/numpy/pandas/scipy/wfdb/sklearn/matplotlib/einops)을 재사용한다.
-새 환경은 CUDA에 맞는 PyTorch를 별도로 설치하고 `requirements-mae-cause.txt`를 사용한다.
+기존 pilot 환경에 모든 의존성이 있다고 가정하지 않는다. 이전 pilot은 전처리된 배열을
+읽지만 이번 mV cache 생성에는 원본 WFDB를 읽는 `wfdb`도 필요하다. SOTA 설치 스크립트는
+별도 `/data/gykwak03/envs/ecg-sota`에 `wfdb`를 설치하도록 되어 있다. 서버에서 실제 Python
+경로와 torch/numpy/pandas/scipy/wfdb/sklearn/matplotlib/einops import를 확인하고 완전한 환경을
+선택한다. 아래 예시의 `python`은 선택한 개인 환경의 절대 경로로 바꾼다. `sbatch` 안에서도
+동일한 절대 경로를 사용한다. `(base)` 표시만으로 실행 환경을 판단하지 않는다.
+서버에서 pandas 3.0.6과 구형 WFDB 4.1.2를 조합하면 import 시 annotation table의
+`set_index`에서 StringArray 오류가 발생한다. pandas 3.0 호환 수정이 포함된 WFDB 4.3.1을
+사용한다. 기존 개인 환경에서는 해당 Python으로 `-m pip install "wfdb==4.3.1"`을 실행하고
+전체 import와 `-m pip check`를 확인한다. 설치 성공 메시지만으로 호환성을 판단하지 않는다.
+공용/base 환경에 설치하지 않는다. 새 개인 환경은 NAS의 `/data/gykwak03/` 아래에 만들고,
+CUDA에 맞는 PyTorch를 별도로 설치한 뒤 `requirements-mae-cause.txt`를 사용한다.
+Seraph tutorial 3의 NAS/개인 환경 안내와 tutorial 4의 srun 사전 확인 → sbatch 학습 순서를
+따른다. tutorial 4는 debug partition을 srun, batch partition을 sbatch용으로 구분하므로,
+계정에 허용된 현재 partition/QOS는 서버의 `show-assoc`, `show-qos`에서 확인한다.
+기존 제출 예시의 debug partition이 본 학습용으로 적절하다고 단정하지 않는다.
 각 학습 프로세스는 GPU 한 장을 사용한다. 두 GPU에서는 서로 겹치지 않는 condition/seed를
 나눠 실행할 수 있다. 실제 GPU 메모리·속도는 아직 측정하지 않았으므로 소규모 실행으로 확인한다.
 전체 기본 계획은 24 conditions × 3 seeds = 198,000 updates다. 처음부터 전부 실행하는
 명령을 권장하지 않으며 아래처럼 조건·seed를 명시해 단계적으로 진행한다.
+
+### 전체 조건과 분류 평가까지 실행
+
+전체 실행을 선택한 경우 `submit_mae_cause_all.sh`를 사용한다. 기존 scientific runner는
+수정하지 않는다. 제한된 `--conditions`, `--seeds`, `--no-probe`를 전달하지 않고,
+`--probe-audit --resume`을 전달한다. 24조건 × seeds 42/43/44의 72회 사전학습,
+학습 전/후 encoder, 두 pooling과 full/visible 입력, 300/1,500 update probe를 실행한다.
+공식 ST-MEM은 지원하는 official full-input probe만 실행한다.
+
+```bash
+cd /data/gykwak03/capstone2/predictability-guided-ecg-masking
+show-assoc
+show-qos
+# 실제 계정에 허용된 학습용 partition을 입력한다. 이름을 임의로 추정하지 않는다.
+export MAE_PARTITION='실제 허용된 partition 이름'
+# 계정에서 명시적 QOS가 필요한 경우에만: export MAE_QOS='실제 허용된 QOS'
+bash experiments/submit_mae_cause_all.sh --dry-run
+bash experiments/submit_mae_cause_all.sh
+```
+
+기본 개인 Python은 `/data/gykwak03/envs/ecg-mask-pilot/bin/python`이다.
+50 Hz artifact는 clone 부모의 `ptbxl_250hz_bp067_50`, 없으면 저장소 내부
+`preprocessing/artifacts/ptbxl_250hz_bp067_50`를 확인한다. 원본은 clone 부모의
+`ptb-xl/ptb-xl`, 없으면 `ptb-xl`을 확인한다. 공식 코드는 clone 부모의 `ST-MEM`,
+없으면 `external/ST-MEM`을 확인한다. 다르면 `MAE_PYTHON`, `MAE_ARTIFACT_DIR`,
+`MAE_RAW_DIR`, `MAE_STMEM_REPO`로 절대 경로를 지정한다. 파일/설정을 검증하며,
+패키지 설치나 checkpoint 다운로드는 하지 않는다.
+
+기본 작업 폴더는 `experiments/artifacts/mae_cause_all`로, 이전 `--no-probe` 실행과
+분리된다. GPU가 할당된 job 안에서 전체 plan 검증/생성 → mV cache 준비 → 전체 학습과
+probe → 분석 순서로 실행한다. 같은 작업 폴더를 동시에 사용하는 작업은 lock으로 차단한다.
+기본 GPU는 한 장이며 모든 조건을 순차 실행한다. `--dry-run`은 제출 명령만 출력한다.
+기본 `MAE_TIME=04:00:00`은 job 하나의 시간 제한이며 전체 완료 시간 예측이 아니다.
+계정에서 허용한 값으로 바꿀 수 있다. 시간 제한으로 학습이 끝나지 않으면 같은 명령을
+재제출한다. 완료된 run은 건너뛰고 중단된 사전학습은 저장된 checkpoint부터 이어간다.
+아직 첫 checkpoint가 저장되지 않은 실행은 자동 재개할 수 없다. Probe 도중 중단된 경우
+완료한 사전학습을 다시 하지 않고 해당 run의 probe 평가를 처음부터 다시 수행한다.
+환경 버전/GPU 종류/코드를 바꾸지 않는다. mV cache 생성이 중단돼 completion manifest가
+없으면 기존 폴더를 보존하고 새 `MAE_WORK_DIR`에서 준비한다.
+
+결과는 `mae_cause_all/study/runs/<condition>/seed<seed>/`와
+`mae_cause_all/analysis-job<jobid>/`에 저장된다. 분석은 일반 실행 오류가 난 뒤에도 완료된
+run을 집계하지만, Slurm이 시간 제한으로 종료시키면 분석 단계가 실행되지 않을 수 있다.
+이 경우 같은 script를 재제출하거나 아래 별도 분석 CLI를 사용한다.
+
+### 조건을 제한해서 단계적으로 실행
 
 ```bash
 cd /data/gykwak03/capstone2/predictability-guided-ecg-masking
