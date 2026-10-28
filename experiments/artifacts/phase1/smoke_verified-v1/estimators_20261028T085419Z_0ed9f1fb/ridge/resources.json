@@ -1,0 +1,37 @@
+{
+  "complete": true,
+  "training_seconds": 1.5909493000071961,
+  "parameters": 2028,
+  "peak_vram_bytes": 0,
+  "fitting_target_counts": [
+    24,
+    32,
+    32,
+    28,
+    32,
+    34,
+    32,
+    39,
+    36,
+    37,
+    30,
+    32
+  ],
+  "fitting_targets": 388,
+  "fitting_bank_sha256": "6ddf313822318dffaeccd00025361179cc0fee9f91cac6220d013e0c8be6aeae",
+  "runtime": {
+    "python": "3.12.14",
+    "torch": "2.14.1+cpu",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "pandas": "3.0.6",
+    "cuda": null,
+    "device": "cpu",
+    "precision": "fp32",
+    "effective_batch": 4,
+    "microbatch": 2,
+    "accumulation": 2,
+    "gpu_name": null,
+    "gpu_memory_bytes": null
+  }
+}

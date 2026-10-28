@@ -1,0 +1,45 @@
+{
+  "ridge": {
+    "lags_samples": [
+      -100,
+      -50,
+      -1,
+      0,
+      1,
+      50,
+      100
+    ],
+    "lags_seconds": [
+      -0.4,
+      -0.2,
+      -0.004,
+      0.0,
+      0.004,
+      0.2,
+      0.4
+    ],
+    "mode": "fixed_seconds",
+    "alpha": 0.001,
+    "time_samples_per_ecg_mask": 8,
+    "input_features": 169,
+    "uses_future_offsets": true,
+    "context": "selected time offsets across all 12 leads; offline reconstruction"
+  },
+  "cnn": {
+    "width": 8,
+    "input_channels": 24,
+    "channels": "12 visible values + 12 observed indicators",
+    "receptive_field_samples": 97,
+    "receptive_field_seconds": 0.388,
+    "context": "all leads; 7 + 6*(1+2+4+8) = 97 samples, up to +/-48 samples"
+  },
+  "transformer": {
+    "width": 16,
+    "depth": 1,
+    "heads": 4,
+    "input": "per-token P visible samples + 1 observed indicator; learned lead and fixed sin/cos time",
+    "context": "bidirectional attention over all lead-time tokens"
+  },
+  "fairness": "Same observed ECG values/indicator and hidden targets; receptive fields and fitting compute differ",
+  "difficulty": "Raw NRMSE only. Lower is easier; no Easy/Medium/Hard policy or percentile is fitted."
+}

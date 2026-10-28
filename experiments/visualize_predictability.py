@@ -20,7 +20,7 @@ import pandas as pd
 from threadpoolctl import threadpool_limits
 import torch
 
-from masking_diagnostics import write_json
+from io_utils import write_json
 from predictability_estimators import ESTIMATORS, LaggedRidge, masks_from_bank, predictability_percentile
 from run_predictability import ROOT, LEADS, evaluate, load_data
 

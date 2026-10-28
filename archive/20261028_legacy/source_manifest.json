@@ -1,0 +1,348 @@
+{
+  "date": "2026-10-28",
+  "purpose": "Byte-preserved legacy reference snapshot; active outputs/data were not moved.",
+  "files": [
+    {
+      "original_path": "experiments/analyze_mae_cause_study.py",
+      "archived_path": "archive/20261028_legacy/experiments/analyze_mae_cause_study.py",
+      "sha256": "9a539957fd53cf8c090a209302ef3cd5bd12b23f11d35259c77508cc704bbd7d",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/compare_ecg_jepa_pilot.py",
+      "archived_path": "archive/20261028_legacy/experiments/compare_ecg_jepa_pilot.py",
+      "sha256": "27e37a991b8fc26724306f073a76923a923cc8387747953c9e5d631457cfa5b4",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/compare_sota_runs.py",
+      "archived_path": "archive/20261028_legacy/experiments/compare_sota_runs.py",
+      "sha256": "b609291978da1fdbc6416d05e6fd6906cf1952682cbe2e704b03354af7fa4344",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/ecg_jepa_adapter.py",
+      "archived_path": "archive/20261028_legacy/experiments/ecg_jepa_adapter.py",
+      "sha256": "780adfa2fa7a1823db999546dde6269dd0a40fd509bd7fa06ee256b63c3aa154",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/ECG_JEPA_PILOT.md",
+      "archived_path": "archive/20261028_legacy/experiments/ECG_JEPA_PILOT.md",
+      "sha256": "fa588f3512a528401d27cb2b8d1259ae13d004d81feea8299527cf9e267105d0",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/inspect_masking_pilot.py",
+      "archived_path": "archive/20261028_legacy/experiments/inspect_masking_pilot.py",
+      "sha256": "aad844584f9baf2f9014f649c0b0ce97c83307f86b41fb2594465b944d08ca1d",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/mae_cause_data.py",
+      "archived_path": "archive/20261028_legacy/experiments/mae_cause_data.py",
+      "sha256": "99bc3e19b72b856093d1cbd4873aebb953228a213dfeac71b51ad322349f76ce",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/mae_cause_eval.py",
+      "archived_path": "archive/20261028_legacy/experiments/mae_cause_eval.py",
+      "sha256": "fb9ab8d928672038e3cff34c7805ffb27af7af730edac79c99ab9117005b1d0f",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/mae_cause_model.py",
+      "archived_path": "archive/20261028_legacy/experiments/mae_cause_model.py",
+      "sha256": "1fba1e014de792d52079899b0f144c216f508fd85450f28549594f85be14932e",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/mae_cause_plan.py",
+      "archived_path": "archive/20261028_legacy/experiments/mae_cause_plan.py",
+      "sha256": "21b4860395f7b0b628b862163c2a9c03c1fdcfc29c96f56a40a356223d84eb44",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/MAE_CAUSE_STUDY.md",
+      "archived_path": "archive/20261028_legacy/experiments/MAE_CAUSE_STUDY.md",
+      "sha256": "58074f1dffd6cdd4a5e50cc3cc7f11d36f545d571c12cf1af8088c75585cc6dc",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/masking_diagnostics.py",
+      "archived_path": "archive/20261028_legacy/experiments/masking_diagnostics.py",
+      "sha256": "381233e8cbb33c40043a722713d10bef5f778e6945b6523dadf8e5e7934a57ad",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/Masking_pilot.ipynb",
+      "archived_path": "archive/20261028_legacy/experiments/Masking_pilot.ipynb",
+      "sha256": "bc2c52dc56cd698139c377a953496e64725ae45f56ce606a770a99151a22966d",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/PATCH_DIFFICULTY.md",
+      "archived_path": "archive/20261028_legacy/experiments/PATCH_DIFFICULTY.md",
+      "sha256": "fe243ca0ed68c483da28614e176d76bb0d3aef7abbb573534df5a10ea68e1954",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/patch_difficulty.py",
+      "archived_path": "archive/20261028_legacy/experiments/patch_difficulty.py",
+      "sha256": "4601928e950f7f3632d94853c776095f634fda0351d0fd4dda19b46c1039d0d4",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/pilot_comparison.py",
+      "archived_path": "archive/20261028_legacy/experiments/pilot_comparison.py",
+      "sha256": "97ab06bfb9b370b34b704e84cb7116f6afe512d09235c848c86a3fbbbac0d2fa",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/plot_masking_pilot.py",
+      "archived_path": "archive/20261028_legacy/experiments/plot_masking_pilot.py",
+      "sha256": "429d64dc4e8114ca4443948064707a197e81df2df4fdd5470d76d071597e512c",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/predictability_estimators.py",
+      "archived_path": "archive/20261028_legacy/experiments/predictability_estimators.py",
+      "sha256": "d4fff862e1794c78b69b57101b31f685aaa698d039a0b16896c4e42cab4020e7",
+      "action": "reference_copy_active_retained"
+    },
+    {
+      "original_path": "experiments/prepare_and_run_mae_all.sbatch",
+      "archived_path": "archive/20261028_legacy/experiments/prepare_and_run_mae_all.sbatch",
+      "sha256": "3ca1b2e546dd8822f0ad321d1b18a0dde310577a215d6cc6ebf9505ca1f80f58",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/README.md",
+      "archived_path": "archive/20261028_legacy/experiments/README.md",
+      "sha256": "92f344b98212d24ef6075bf3bffb18fba9c2bd5534e8cee463f8b3fdd9c575a0",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/requirements-ecg-jepa.txt",
+      "archived_path": "archive/20261028_legacy/experiments/requirements-ecg-jepa.txt",
+      "sha256": "214f2514e52fd0cf3497b184eac8bf07eb33042c90dcdbb2263dea5dfb977320",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/requirements-mae-cause.txt",
+      "archived_path": "archive/20261028_legacy/experiments/requirements-mae-cause.txt",
+      "sha256": "c604f54276c308a6963a5bfbb7392c248a3c39cad0fc157956c07ffd942fe9ef",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/requirements-sota.txt",
+      "archived_path": "archive/20261028_legacy/experiments/requirements-sota.txt",
+      "sha256": "1710b67ffcb822aa5d5d57c8f00d6edc7c913350fb6c65514363c9b313703a42",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/run_ecg_jepa_grid.py",
+      "archived_path": "archive/20261028_legacy/experiments/run_ecg_jepa_grid.py",
+      "sha256": "33415eeadee5c58696e9331b839465dd56ed9181d070bac34aafd76418342f3b",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/run_ecg_jepa_pilot.py",
+      "archived_path": "archive/20261028_legacy/experiments/run_ecg_jepa_pilot.py",
+      "sha256": "b20fe90ae9f3c1631900e62b87f6ec4b66e671b8fbb3b786009784e45cdb3ec0",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/run_mae_cause_study.py",
+      "archived_path": "archive/20261028_legacy/experiments/run_mae_cause_study.py",
+      "sha256": "46169f9e6548c4dd437aa27aea98e8ef35b6676b1f8835b490bb7f363d8ddf15",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/run_masking_pilot.py",
+      "archived_path": "archive/20261028_legacy/experiments/run_masking_pilot.py",
+      "sha256": "13ffde2e50127cab8879e830c8b0f8f4e0b0447f669511f1d844bb6f00e2afbf",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/run_patch_difficulty.py",
+      "archived_path": "archive/20261028_legacy/experiments/run_patch_difficulty.py",
+      "sha256": "45904633e91d839d88067a3c20521db1ac17ca159e2fbbe1b2a80564549fd8d1",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/run_predictability.py",
+      "archived_path": "archive/20261028_legacy/experiments/run_predictability.py",
+      "sha256": "c6d755b05e377243661bc5e6c5d2dd5398262f096bf2ae424d6cdda9f95d2519",
+      "action": "reference_copy_active_retained"
+    },
+    {
+      "original_path": "experiments/run_sota_comparison.py",
+      "archived_path": "archive/20261028_legacy/experiments/run_sota_comparison.py",
+      "sha256": "cf040503a052976f2a2579db88c445cb771c1728a5a97d9de19c9d562c997106",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/run_st_mem_pilot.py",
+      "archived_path": "archive/20261028_legacy/experiments/run_st_mem_pilot.py",
+      "sha256": "7bf9fa2c8e207db7b27386424f70272c333a6c4f59858a885b3dfd1f85a85762",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/setup_sota_env.sh",
+      "archived_path": "archive/20261028_legacy/experiments/setup_sota_env.sh",
+      "sha256": "cd1d91b8af8071aa2ca091cfb4c0340f2f71cb9eea8a60a91933d825355eec5c",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/setup_sota_repos.py",
+      "archived_path": "archive/20261028_legacy/experiments/setup_sota_repos.py",
+      "sha256": "53eb6aef9af378377ad5a49e33b9fd4aedfdc6d9061f45ab3e41c701707b0022",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/sota_adapters.py",
+      "archived_path": "archive/20261028_legacy/experiments/sota_adapters.py",
+      "sha256": "3706525c65c28c5c094079c5b76dbb396fa03c1eea3c08cb1830d9cb2bed98c2",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/SOTA_COMPARISON.md",
+      "archived_path": "archive/20261028_legacy/experiments/SOTA_COMPARISON.md",
+      "sha256": "5ee3fdd1facff04d8b488bfb650ec53ff91f5a5064ea24d276721d82b20269a3",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/sota_sources.json",
+      "archived_path": "archive/20261028_legacy/experiments/sota_sources.json",
+      "sha256": "1f2f9541f083b45993a428b9e597adc11c7ad991a402adb30e4ad5c017e0d6af",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/st_mem_adapter.py",
+      "archived_path": "archive/20261028_legacy/experiments/st_mem_adapter.py",
+      "sha256": "74ce9d0af98992e13ba0f38042803441cf59a3e96af9c7cbf0aa846bd674ffc4",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/ST_MEM_pilot.ipynb",
+      "archived_path": "archive/20261028_legacy/experiments/ST_MEM_pilot.ipynb",
+      "sha256": "7cc9fc728aa8470b61a3a31e787f24bc413139cf5f96471ecfaaa6cb2b28e866",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/start_sota_profile.sh",
+      "archived_path": "archive/20261028_legacy/experiments/start_sota_profile.sh",
+      "sha256": "78296d1f551f3c1800f461aa6e2c68c537617050427337ee5c2e411a97ad91dc",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/submit_mae_cause_all.sh",
+      "archived_path": "archive/20261028_legacy/experiments/submit_mae_cause_all.sh",
+      "sha256": "25e78dadc9c5df5baeb4182c0306276078f4afcad7648f1d1d24422d2a0e9ac2",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/submit_pilot.sh",
+      "archived_path": "archive/20261028_legacy/experiments/submit_pilot.sh",
+      "sha256": "f8636c77bb45dfec71d84d5c84d1780f67e89844a0a391c863551da7fbf5c25c",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/submit_sota.sh",
+      "archived_path": "archive/20261028_legacy/experiments/submit_sota.sh",
+      "sha256": "eb0ce44fcf84eb2f6edbbf11021e7d67fbbfc6f8378184cd0f663db69997c705",
+      "action": "moved"
+    },
+    {
+      "original_path": "experiments/visualize_predictability.py",
+      "archived_path": "archive/20261028_legacy/experiments/visualize_predictability.py",
+      "sha256": "724456084000913163cb4fed9e3f1d5a24250daded9233708a170476d17319ba",
+      "action": "reference_copy_active_retained"
+    },
+    {
+      "original_path": "tests/test_ecg_jepa_pilot.py",
+      "archived_path": "archive/20261028_legacy/tests/test_ecg_jepa_pilot.py",
+      "sha256": "76f55f6b8a6c521dd50c1eaf1dd2488b23c9a434f9a1acd33fd70c374d7cc340",
+      "action": "moved"
+    },
+    {
+      "original_path": "tests/test_mae_cause_study.py",
+      "archived_path": "archive/20261028_legacy/tests/test_mae_cause_study.py",
+      "sha256": "22f367198e8a0207268439f42b721fdb4e967492268844aa11f7a0b06929b468",
+      "action": "moved"
+    },
+    {
+      "original_path": "tests/test_masking_pilot.py",
+      "archived_path": "archive/20261028_legacy/tests/test_masking_pilot.py",
+      "sha256": "e1af6ebe85155106bcd87a1c9afe8d232b14db379212d1345bfa11d2ba94ebf8",
+      "action": "moved"
+    },
+    {
+      "original_path": "tests/test_patch_difficulty.py",
+      "archived_path": "archive/20261028_legacy/tests/test_patch_difficulty.py",
+      "sha256": "d58f4af4c5dd17119c0b8e85a499aa2155cb1d51638da66ed337b1192879cbe7",
+      "action": "moved"
+    },
+    {
+      "original_path": "tests/test_pilot_comparison.py",
+      "archived_path": "archive/20261028_legacy/tests/test_pilot_comparison.py",
+      "sha256": "add1c63d623c206b01a25da6a850f13f4065196443b4feb0939876c3456f6eed",
+      "action": "moved"
+    },
+    {
+      "original_path": "tests/test_predictability.py",
+      "archived_path": "archive/20261028_legacy/tests/test_predictability.py",
+      "sha256": "6e98d30b940f7bb14a0bc126bdc5e323f66752bd27e782ab18bc4d22769744c2",
+      "action": "reference_copy_active_retained"
+    },
+    {
+      "original_path": "tests/test_preprocessing_cli.py",
+      "archived_path": "archive/20261028_legacy/tests/test_preprocessing_cli.py",
+      "sha256": "ee2337d653a2f3fdd5b08e3318508fe69b78f90393e5b237f04c6fb249d86aa3",
+      "action": "reference_copy_active_retained"
+    },
+    {
+      "original_path": "tests/test_sota_comparison.py",
+      "archived_path": "archive/20261028_legacy/tests/test_sota_comparison.py",
+      "sha256": "f91f3019a6aae10ca2b6de4840290d977e281ba32923613b4e76b79e2051b49a",
+      "action": "moved"
+    },
+    {
+      "original_path": "tests/test_st_mem_pilot.py",
+      "archived_path": "archive/20261028_legacy/tests/test_st_mem_pilot.py",
+      "sha256": "4ad052cc91acdc6c2584310e747be2236678fdf1df37ab65eafb7572abee1c17",
+      "action": "moved"
+    },
+    {
+      "original_path": "tests/test_submit_mae_cause_all.py",
+      "archived_path": "archive/20261028_legacy/tests/test_submit_mae_cause_all.py",
+      "sha256": "ef2d0eedfdb444f6699f97922ac3432e7a7c0da3ee4b6eaebb1c72db34b1390d",
+      "action": "moved"
+    },
+    {
+      "original_path": "tests/test_submit_pilot.py",
+      "archived_path": "archive/20261028_legacy/tests/test_submit_pilot.py",
+      "sha256": "aa0f72b11e73304b4b6d0919a107cceff534a30494fead5424683121e6772c35",
+      "action": "moved"
+    },
+    {
+      "original_path": "tests/test_submit_sota.py",
+      "archived_path": "archive/20261028_legacy/tests/test_submit_sota.py",
+      "sha256": "70dbc46276e5341ff460bdca9a050a97b0191fa16d6f78d04f3f6116d778925c",
+      "action": "moved"
+    },
+    {
+      "original_path": "preprocessing/PTBXL_preprocessing.ipynb",
+      "archived_path": "archive/20261028_legacy/preprocessing/PTBXL_preprocessing.ipynb",
+      "sha256": "9f93986ede31e15c21c2167f1df35cd1c3da73b60328310072481d7ab7aea06a",
+      "action": "reference_copy_active_retained"
+    },
+    {
+      "original_path": "preprocessing/run_preprocessing.py",
+      "archived_path": "archive/20261028_legacy/preprocessing/run_preprocessing.py",
+      "sha256": "cf6189e7bedf2f63f9a0c115d27b49d46b3d0219d73142b9654848c3ed113f17",
+      "action": "reference_copy_active_retained"
+    }
+  ]
+}

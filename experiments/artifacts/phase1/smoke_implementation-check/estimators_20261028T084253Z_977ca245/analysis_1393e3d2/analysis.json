@@ -1,0 +1,8 @@
+{
+  "source_status": "completed",
+  "images": 20,
+  "optimal_patch": null,
+  "optimal_ratio": null,
+  "test_opened": false,
+  "note": "All ECG maps and counts are in each ecg_maps.npz; the report previews the first ECG. No downstream utility is inferred."
+}

@@ -1,0 +1,15 @@
+{
+  "estimator": "transformer",
+  "update": 2,
+  "budget": 2,
+  "complete": true,
+  "session_seconds": 0.35247890000755433,
+  "session_evaluation_seconds": 0.216081699996721,
+  "training_seconds": 0.10014740000769962,
+  "mean_seconds_per_update": 0.05007370000384981,
+  "peak_vram_bytes": 0,
+  "parameters": 5186,
+  "trainable_parameters": 5186,
+  "train_sequence_sha256": "6c134a18e70358ba4af3e2b1ec6366a330e9c7dcbc51b9b5e7e7f8194cbb25eb",
+  "fixed_train_validation_banks": true
+}

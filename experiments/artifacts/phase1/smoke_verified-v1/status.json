@@ -1,0 +1,13 @@
+{
+  "status": "completed",
+  "synthetic": true,
+  "test_opened": false,
+  "real_ecg_performance": false,
+  "pilot": "C:\\Users\\gykwa\\kyunghee2026\\capstonedesign2\\predictability-guided-ecg-masking\\experiments\\artifacts\\phase1\\smoke_verified-v1\\pilot_20261028T085413Z_0b50e899",
+  "estimators": "C:\\Users\\gykwa\\kyunghee2026\\capstonedesign2\\predictability-guided-ecg-masking\\experiments\\artifacts\\phase1\\smoke_verified-v1\\estimators_20261028T085419Z_0ed9f1fb",
+  "reports": [
+    "C:\\Users\\gykwa\\kyunghee2026\\capstonedesign2\\predictability-guided-ecg-masking\\experiments\\artifacts\\phase1\\smoke_verified-v1\\pilot_20261028T085413Z_0b50e899\\analysis_5d9406aa",
+    "C:\\Users\\gykwa\\kyunghee2026\\capstonedesign2\\predictability-guided-ecg-masking\\experiments\\artifacts\\phase1\\smoke_verified-v1\\estimators_20261028T085419Z_0ed9f1fb\\analysis_a3e1f45a"
+  ],
+  "total_seconds": 22.75434420000238
+}

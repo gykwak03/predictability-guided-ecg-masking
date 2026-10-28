@@ -1,0 +1,25 @@
+{
+  "data_id": "345fcab3b832a99341ee57686afb9b9889f7ced9afa8c7c50ad3aab8eaee32ba",
+  "hashes": {
+    "train": {
+      "signals": "a0ee75c204b596d57e2f5d4b1c12812b0f1f21edbb6691e1a311500e8ff3b5a1",
+      "metadata": "a214a7749c59f38afd974896d1b7c47c1e52d112f9b2b24b886f8b88ec1f5c82"
+    },
+    "validation": {
+      "signals": "6d52d36d133e7b402bbeacd57ea04d85b02820261c2856036d953fd8274ad501",
+      "metadata": "be582155df57b012695336bd46ab650e824dc96c5601c71cc56abeb2d6f9008b"
+    }
+  },
+  "synthetic": true,
+  "test_opened": false,
+  "label_files_opened": false,
+  "preprocessing": {
+    "formula": "(x - mean_time(x)) / max(std_time(x, ddof=0), 1e-6)",
+    "scope": "one complete 10-second ECG and one lead, before masking",
+    "includes_future_hidden_samples": true,
+    "units": "dimensionless per-record z units",
+    "resampling": "scipy.signal.resample_poly(up=1, down=2, axis=1, padtype=line)",
+    "filter": "scipy.signal.butter(order=4, [0.67,50], fs=250, output=sos); sosfiltfilt(axis=1)",
+    "provenance_limit": "Legacy schema 1 does not encode padtype/ddof; these follow the reviewed notebook implementation. Arrays alone cannot prove raw WFDB provenance."
+  }
+}

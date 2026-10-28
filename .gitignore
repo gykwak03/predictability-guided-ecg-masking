@@ -5,6 +5,10 @@ __pycache__/
 .venv/
 .ipynb_checkpoints/
 
+# Historical runners may create outputs next to their archived sources.
+# Keep those generated datasets/checkpoints out of Git too.
+archive/**/artifacts/
+
 # Generated PTB-XL arrays are multi-gigabyte local artifacts.
 preprocessing/artifacts/
 
@@ -19,3 +23,6 @@ experiments/artifacts/**
 !experiments/artifacts/**/*curves*.png
 !experiments/artifacts/**/gradient_updates.png
 !experiments/artifacts/**/condition_comparison.png
+
+# Scratch caches must stay excluded even when they contain JSON/CSV manifests.
+experiments/artifacts/phase1/cache/

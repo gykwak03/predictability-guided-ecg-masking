@@ -1,0 +1,72 @@
+[
+  {
+    "estimator": "ridge",
+    "complete": true,
+    "training_seconds": 1.5909493000071961,
+    "parameters": 2028,
+    "peak_vram_bytes": 0,
+    "fitting_target_counts": [
+      24,
+      32,
+      32,
+      28,
+      32,
+      34,
+      32,
+      39,
+      36,
+      37,
+      30,
+      32
+    ],
+    "fitting_targets": 388,
+    "fitting_bank_sha256": "6ddf313822318dffaeccd00025361179cc0fee9f91cac6220d013e0c8be6aeae",
+    "runtime": {
+      "python": "3.12.14",
+      "torch": "2.14.1+cpu",
+      "numpy": "2.5.3",
+      "scipy": "1.18.1",
+      "pandas": "3.0.6",
+      "cuda": null,
+      "device": "cpu",
+      "precision": "fp32",
+      "effective_batch": 4,
+      "microbatch": 2,
+      "accumulation": 2,
+      "gpu_name": null,
+      "gpu_memory_bytes": null
+    }
+  },
+  {
+    "estimator": "cnn",
+    "update": 2,
+    "budget": 2,
+    "complete": true,
+    "session_seconds": 0.5480877000081819,
+    "session_evaluation_seconds": 0.34094270001514815,
+    "session_checkpoint_seconds": 0.05030160000023898,
+    "training_seconds": 0.1467570000095293,
+    "mean_seconds_per_update": 0.07337850000476465,
+    "peak_vram_bytes": 0,
+    "parameters": 3572,
+    "trainable_parameters": 3572,
+    "train_sequence_sha256": "6c134a18e70358ba4af3e2b1ec6366a330e9c7dcbc51b9b5e7e7f8194cbb25eb",
+    "fixed_train_validation_banks": true
+  },
+  {
+    "estimator": "transformer",
+    "update": 2,
+    "budget": 2,
+    "complete": true,
+    "session_seconds": 0.40244540000276174,
+    "session_evaluation_seconds": 0.22440400000778027,
+    "session_checkpoint_seconds": 0.04830510000465438,
+    "training_seconds": 0.12144360001548193,
+    "mean_seconds_per_update": 0.06072180000774097,
+    "peak_vram_bytes": 0,
+    "parameters": 5186,
+    "trainable_parameters": 5186,
+    "train_sequence_sha256": "6c134a18e70358ba4af3e2b1ec6366a330e9c7dcbc51b9b5e7e7f8194cbb25eb",
+    "fixed_train_validation_banks": true
+  }
+]

@@ -22,7 +22,7 @@ import pandas as pd
 import scipy
 import torch
 
-from masking_diagnostics import write_json
+from io_utils import write_json
 from predictability_estimators import (ESTIMATORS, LaggedRidge, SmallCNN, SmallTransformer,
                                       difficulty_table, lead_scale, mask_bank, normalized_masked_loss,
                                       patient_pools, predictability_percentile, reconstruction_metrics)

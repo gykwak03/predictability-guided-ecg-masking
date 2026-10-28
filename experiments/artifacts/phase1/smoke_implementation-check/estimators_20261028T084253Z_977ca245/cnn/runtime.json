@@ -1,0 +1,15 @@
+{
+  "python": "3.12.14",
+  "torch": "2.14.1+cpu",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "pandas": "3.0.6",
+  "cuda": null,
+  "device": "cpu",
+  "precision": "fp32",
+  "effective_batch": 4,
+  "microbatch": 2,
+  "accumulation": 2,
+  "gpu_name": null,
+  "gpu_memory_bytes": null
+}

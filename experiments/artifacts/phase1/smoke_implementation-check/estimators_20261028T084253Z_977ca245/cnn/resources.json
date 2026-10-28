@@ -1,0 +1,14 @@
+{
+  "update": 2,
+  "budget": 2,
+  "complete": true,
+  "session_seconds": 0.36955529999977443,
+  "session_evaluation_seconds": 0.20799840001564007,
+  "training_seconds": 0.12321639999572653,
+  "mean_seconds_per_update": 0.06160819999786327,
+  "peak_vram_bytes": 0,
+  "parameters": 3572,
+  "trainable_parameters": 3572,
+  "train_sequence_sha256": "6c134a18e70358ba4af3e2b1ec6366a330e9c7dcbc51b9b5e7e7f8194cbb25eb",
+  "fixed_train_validation_banks": true
+}

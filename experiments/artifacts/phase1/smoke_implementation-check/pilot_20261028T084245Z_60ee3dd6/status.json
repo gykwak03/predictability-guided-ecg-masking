@@ -1,0 +1,11 @@
+{
+  "status": "completed",
+  "stage": "pilot",
+  "synthetic": true,
+  "errors": [],
+  "test_opened": false,
+  "load_validation_seconds": 0.051427099999273196,
+  "session_total_seconds": 8.184917799997493,
+  "optimal_patch": null,
+  "selection": "Manual validation review: stability, amplitude, zero-baseline improvement and cost; MSE alone is insufficient"
+}

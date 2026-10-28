@@ -123,6 +123,16 @@ Seraph tutorial 3의 NAS/개인 환경 안내와 tutorial 4의 srun 사전 확�
 
 ### 전체 조건과 분류 평가까지 실행
 
+서버에 50 Hz artifact와 원본 WFDB가 모두 없다면 로컬의 PTB-XL 1.0.3
+`ptb-xl.zip`을 `/data/gykwak03/capstone2/ptb-xl.zip`에 전송하고
+`sbatch experiments/prepare_and_run_mae_all.sbatch`를 사용한다. 기존 로그 폴더를 먼저
+만들고 개인 Python의 `IPython` import도 확인한다. 이 준비 job은 ZIP에서 500 Hz 기록과
+메타데이터를 별도 `ptbxl_raw`에 추출하고 새 0.67–50 Hz artifact를 만든 뒤, 같은 GPU
+할당에서 전체 worker를 실행한다. 기존 40 Hz 배열은 입력으로 사용하거나 수정하지 않는다.
+이 스크립트의 archive prefix는 확인한 로컬 ZIP 구조에 해당한다. 다른 ZIP은 원본 경로를
+확인해야 한다. 로그는 `logs/mae-prepare-all_<jobid>.log`다. 재제출할 때도 같은 준비 script를
+사용하면 완료한 추출/전처리는 건너뛰고 전체 worker의 checkpoint 재개로 이어진다.
+
 전체 실행을 선택한 경우 `submit_mae_cause_all.sh`를 사용한다. 기존 scientific runner는
 수정하지 않는다. 제한된 `--conditions`, `--seeds`, `--no-probe`를 전달하지 않고,
 `--probe-audit --resume`을 전달한다. 24조건 × seeds 42/43/44의 72회 사전학습,

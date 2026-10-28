@@ -1,0 +1,16 @@
+{
+  "masks": 8,
+  "pooled_nrmse": 1.1409421457513438,
+  "hidden_mse": 1.301748979782293,
+  "zero_nrmse": 0.9999999999881894,
+  "skill_vs_zero": -0.30174897998242933,
+  "masked_pearson": -0.0026053240365905518,
+  "prediction_rms": 0.5468978474375559,
+  "target_rms": 0.999999999923162,
+  "rms_ratio": 0.5468978474795784,
+  "worse_than_zero": true,
+  "amplitude_collapse_flag": false,
+  "amplitude_flag_threshold": 0.1,
+  "lower_nrmse_means": "easier reconstruction",
+  "quality": "worse_than_zero"
+}
