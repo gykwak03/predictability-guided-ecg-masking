@@ -23,6 +23,8 @@ archive/20261028_legacy/         과거 실험 코드·설명서·테스트 원�
 - [이동 전후 경로와 SHA-256](archive/20261028_legacy/source_manifest.json)
 
 새 Phase 1 파이프라인은 `experiments/run_phase1.py`입니다.
+서버에서 단계별로 실행하려면 **[Seraph 튜토리얼](docs/SERAPH_TUTORIAL.md)**과
+`scripts/seraph_phase1_tutorial.sh`를 사용하세요. 이 스크립트는 명시한 단계만 제출합니다.
 **[전처리·모델·지표 및 Windows/Seraph 실행 명령](docs/PHASE1.md)**과
 **[로컬 검증 기록](docs/PHASE1_VALIDATION.md)**을 먼저 읽으세요.
 `plan` / `preflight` / `prepare` / `smoke` / `profile` / `pilot` /

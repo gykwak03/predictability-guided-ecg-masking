@@ -182,7 +182,8 @@ def load_checkpoint(path):
 
 
 def train_model(model, kind, data, cfg, folder, identity, evaluation_banks, *,
-                fit_bank=None, fit_masks=None, resume=False, stop_after=None, budget=None):
+                fit_bank=None, fit_masks=None, resume=False, stop_after=None, budget=None,
+                milestone_steps=()):
     folder = Path(folder)
     folder.mkdir(parents=True, exist_ok=True)
     device = device_for(cfg)
@@ -193,6 +194,12 @@ def train_model(model, kind, data, cfg, folder, identity, evaluation_banks, *,
         lr=cfg['lr'] if kind == 'mae' else cfg['estimator_lr'], betas=tuple(cfg['betas']),
         weight_decay=cfg['weight_decay'] if kind == 'mae' else cfg['estimator_weight_decay'])
     contract = dict(config=semantic_config(cfg), identity=identity, kind=kind, horizon=horizon, budget=budget)
+    milestones = sorted(set(milestone_steps))
+    if milestones:
+        if any(type(step) is not int or step < 0 or step > budget for step in milestones):
+            raise ValueError('Milestones must be integer updates within the training budget')
+        contract['milestone_steps'] = milestones
+        (folder / 'milestones').mkdir(exist_ok=True)
     checkpoint = folder / 'checkpoint.pt'
     history, timings, sequence, update = [], [], [], 0
     if checkpoint.exists():
@@ -232,6 +239,9 @@ def train_model(model, kind, data, cfg, folder, identity, evaluation_banks, *,
 
     if update == 0:
         snapshot(0)
+        if 0 in milestones:
+            atomic_checkpoint(folder / 'milestones' / 'update_000000.pt',
+                              dict(model=model.state_dict(), update=0, contract=contract, sequence=[]))
     limit = min(budget, update+stop_after) if stop_after is not None else budget
     for step in range(update+1, limit+1):
         sync(device)
@@ -267,15 +277,19 @@ def train_model(model, kind, data, cfg, folder, identity, evaluation_banks, *,
         timings.append(dict(update=step, training_seconds=end-mark, compute_seconds=end-batch_ready,
                             batch_prepare_seconds=batch_ready-mark, lr=float(lr), loss=loss_value))
         update = step
-        if step % cfg['eval_every'] == 0 or step == limit:
+        if step % cfg['eval_every'] == 0 or step == limit or step in milestones:
             snapshot(step, loss_value)
             print(f'{kind} update={step}/{budget} loss={loss_value:.6g} seconds={timings[-1]["training_seconds"]:.3f}', flush=True)
-        if step % cfg['checkpoint_every'] == 0 or step == limit:
+        if step % cfg['checkpoint_every'] == 0 or step == limit or step in milestones:
             checkpoint_started = time.perf_counter()
             atomic_checkpoint(checkpoint, dict(model=model.state_dict(), optimizer=optimizer.state_dict(),
                 update=step, rng=rng_state(), contract=contract, next_batch=batch_for(data, cfg, kind, step+1, fit_bank, fit_masks)[2],
                 history=history, timings=timings, sequence=sequence))
             pd.DataFrame(timings).to_csv(folder / 'updates.csv', index=False)
+            if step in milestones:
+                atomic_checkpoint(folder / 'milestones' / f'update_{step:06d}.pt',
+                                  dict(model=model.state_dict(), update=step, contract=contract,
+                                       sequence=list(sequence)))
             checkpoint_seconds += time.perf_counter()-checkpoint_started
     resources = dict(update=update, budget=budget, complete=update >= budget,
         session_seconds=time.perf_counter()-started, session_evaluation_seconds=evaluation_seconds,
