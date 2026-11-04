@@ -39,3 +39,7 @@ archive/20261028_legacy/         과거 실험 코드·설명서·테스트 원�
 
 검증은 저장소 루트에서 `python -m pytest`로 실행합니다. Torch 등 의존성이 설치된 Python을 사용하세요.
 이 명령은 `tests/`만 수집하고 과거 전체 실험을 실행하지 않습니다.
+
+기존 Random 사전학습 checkpoint로 Within/Cross 추가 학습을 재검증하려면
+[checkpoint 재사용·전체 hidden loss·optimizer 대조 실험](docs/DEPENDENCY_CONTINUATION.md)을 참고하세요.
+`experiments/run_dependency_continuation.py`는 사전학습을 반복하지 않고 새 결과 폴더에서 D/E/F를 비교합니다.
