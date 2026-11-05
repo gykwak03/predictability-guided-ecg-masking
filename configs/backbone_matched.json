@@ -1,7 +1,7 @@
 {
   "st_mem_repo": "../../ST-MEM",
   "output_root": "../experiments/artifacts/backbone_comparison",
-  "seeds": [42, 43, 44],
+  "seeds": [42],
   "milestones": [0, 1000, 3000],
   "updates": 3000,
   "patch_samples": 50,

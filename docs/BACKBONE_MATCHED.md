@@ -36,7 +36,7 @@ ST-MEM의 decoder 가중치는 lead끼리 공유되며, 12개의 독립 decoder�
 | Loss | 동일한 hidden waveform MSE, per-patch target normalization 없음 |
 | 복원 평가 | 같은 고정 validation 128 ECG·mask, NRMSE·상관·RMS·zero baseline |
 | NRMSE 분모 | 같은 SSL train cohort에서 계산한 lead별 std; validation 통계 미사용 |
-| Seeds | 42,43,44 → **총 6회 사전학습** |
+| Seeds | 42 한 번 → **Plain 1회 + ST-MEM 1회, 총 2회 사전학습** |
 | GPU | seed별 한 job 안에서 양쪽 모델을 순차 실행, 단일 GPU |
 | Test | fold 10 파형·metadata·label을 열지 않음 |
 
@@ -99,7 +99,7 @@ bash scripts/submit_backbone_comparison.sh "$STUDY"
 printf 'STUDY=%s\n' "$STUDY"
 ```
 
-array task 3개(`0,1,2`)가 seed 42/43/44에 대응하며, `%1`로 동시 실행을 하나로 제한한다.
+array task 1개(`0`)가 seed 42에 대응하며, `%1`로 동시 실행을 하나로 제한한다.
 각 task는 Plain → ST-MEM 순서로 실행한다. 기존 GPU job이 있으면 QOS에 따라 대기한다.
 `--nodelist`는 고정하지 않는다. 현재 partition/account 허용 범위는 `show-assoc`·`show-qos`로도 확인한다.
 
@@ -109,6 +109,9 @@ squeue -u gykwak03
 tail -n 80 -F /data/gykwak03/capstone2/logs/backbone-123456_0.out
 sacct -j 123456 --format=JobID,State,Elapsed,ExitCode
 ```
+
+이전 3-seed plan을 이미 만들었다면 위 명령으로 **새 `$STUDY`와 plan을 생성**한다.
+설정 파일만 변경해도 기존 plan에 저장된 seed 목록은 바뀌지 않는다.
 
 시간 제한·중단 후 **같은 `$STUDY`를 지정하여 동일한 제출 명령을 재실행**한다.
 완료한 arm/probe는 재학습하지 않고, 미완료 arm은 마지막 optimizer/RNG 상태에서 이어간다.
@@ -136,14 +139,15 @@ cat "$STUDY/analysis/paired_deltas.csv"
 | `seed42/plain/milestones/update_001000.pt` | 동일 연속 학습의 1,000회 가중치 |
 | `seed42/plain/evaluations/update_003000/` | 복원 mask별/patch별 지표·예시 파형 배열·probe 지표와 확률 |
 | `analysis/paired_deltas.csv` | 같은 seed/update끼리 ST-MEM − Plain 차이 |
-| `analysis/*_summary.csv` | seed 평균·표준편차·실제 관측 수 |
+| `analysis/*_summary.csv` | seed 평균·실제 관측 수 (단일 seed이므로 seed 표준편차는 비어 있음) |
 | `analysis/comparison_curves.png` | 같은 학습량에서 복원과 primary probe 곡선 |
 | `analysis/audit.json` | 완료/부분 상태, 미완료 arm, synthetic 여부 |
 
 `paired_deltas`에서 NRMSE 차이는 음수일수록 ST-MEM이 낮고, AUROC 차이는 양수일수록 ST-MEM이 높다.
 양쪽의 ECG/mask 순서 해시와 probe cohort/head stream이 일치하지 않으면 비교를 중단한다.
-복원 오차만으로 최종 backbone을 결정하지 않고 3 seeds의 primary AUROC, random encoder 대비 이득,
-실행 시간·VRAM을 함께 검토한다. 일부 seed만 완료되면 partial 결과로 보고한다.
+복원 오차만으로 최종 backbone을 결정하지 않고 seed 42의 primary AUROC, random encoder 대비 이득,
+실행 시간·VRAM을 함께 검토한다. 단일 seed 결과로는 seed 간 변동성을 평가할 수 없다.
+양쪽 모델 중 하나가 미완료이면 partial 결과로 보고한다.
 
 ## 7. 로컬 검증 기록 (2026-11-04)
 

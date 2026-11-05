@@ -11,7 +11,7 @@ from experiments.phase1.config import DEFAULTS, PATH_ENV, ROOT, absolute_path, r
 
 BACKBONES = ('plain', 'stmem')
 CLASSES = ['NORM', 'MI', 'STTC', 'CD', 'HYP']
-EXTRA = dict(seeds=[42, 43, 44], milestones=[0, 1000, 3000],
+EXTRA = dict(seeds=[42], milestones=[0, 1000, 3000],
     st_mem_repo=str(ROOT.parent / 'ST-MEM'), probe_updates=1500,
     probe_checkpoints=[300, 1500], probe_batch=256, probe_lr=1e-3,
     probe_weight_decay=1e-4, probe_validation_ecgs=0,
@@ -477,8 +477,10 @@ def analyze(directory):
             ax.set(xlabel='Pretraining optimizer updates', ylabel=label)
             ax.grid(alpha=.2)
             ax.legend()
+        variability = ('single seed (no seed SD)' if len(plan['config']['seeds']) == 1
+                       else 'mean +/- seed SD')
         fig.suptitle(('SYNTHETIC CPU CHECK — ' if plan['synthetic'] else '') +
-                     ('PARTIAL — ' if missing else '') + 'P50 / 50% matched training; mean +/- seed SD')
+                     ('PARTIAL — ' if missing else '') + 'P50 / 50% matched training; ' + variability)
         fig.savefig(output / 'comparison_curves.png', dpi=150)
         plt.close(fig)
     print(f'ANALYSIS={output}; missing arms={missing}', flush=True)
