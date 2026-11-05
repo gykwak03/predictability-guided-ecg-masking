@@ -43,3 +43,7 @@ archive/20261028_legacy/         과거 실험 코드·설명서·테스트 원�
 기존 Random 사전학습 checkpoint로 Within/Cross 추가 학습을 재검증하려면
 [checkpoint 재사용·전체 hidden loss·optimizer 대조 실험](docs/DEPENDENCY_CONTINUATION.md)을 참고하세요.
 `experiments/run_dependency_continuation.py`는 사전학습을 반복하지 않고 새 결과 폴더에서 D/E/F를 비교합니다.
+
+GPU 상향 신청에 사용할 실제 ST-MEM Base 학습 자원 측정은
+[ST-MEM Base 측정·로그·캡처 안내](docs/STMEM_RESOURCE_PROFILE.md)를 참고하세요.
+`scripts/submit_stmem_resource_profile.sh`가 실제 ECG 학습과 1초 간격 GPU 측정을 제출합니다.
