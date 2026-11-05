@@ -47,3 +47,7 @@ archive/20261028_legacy/         과거 실험 코드·설명서·테스트 원�
 GPU 상향 신청에 사용할 실제 ST-MEM Base 학습 자원 측정은
 [ST-MEM Base 측정·로그·캡처 안내](docs/STMEM_RESOURCE_PROFILE.md)를 참고하세요.
 `scripts/submit_stmem_resource_profile.sh`가 실제 ECG 학습과 1초 간격 GPU 측정을 제출합니다.
+
+ST-MEM Base를 Small·Plain MAE와 같은 P50/r50·3000 updates로 학습하려면
+[ST-MEM Base baseline 실행 안내](docs/STMEM_BASE_BASELINE.md)를 참고하세요.
+`experiments/run_stmem_base_baseline.py`는 Base만 새로 학습하고 동일한 복원 평가·linear probe를 수행합니다.
