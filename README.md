@@ -51,3 +51,6 @@ GPU 상향 신청에 사용할 실제 ST-MEM Base 학습 자원 측정은
 ST-MEM Base를 Small·Plain MAE와 같은 P50/r50·3000 updates로 학습하려면
 [ST-MEM Base baseline 실행 안내](docs/STMEM_BASE_BASELINE.md)를 참고하세요.
 `experiments/run_stmem_base_baseline.py`는 Base만 새로 학습하고 동일한 복원 평가·linear probe를 수행합니다.
+
+Plain과 ST-MEM을 Small/Base 각각 같은 파라미터 수로 맞추고, lead별 decoder로
+세 seed에서 복원·linear probe를 비교하려면 [네 모델 비교 실행 안내](docs/LEADWISE_COMPARISON.md)를 참고하세요.
