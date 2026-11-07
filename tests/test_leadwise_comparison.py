@@ -101,10 +101,21 @@ def test_slurm_submission_requests_four_single_gpu_tasks(tmp_path):
     for script in (submit, worker):
         subprocess.run([bash, '-n', script.as_posix()], check=True)
     python = tmp_path / 'fake-python.sh'
-    python.write_text('#!/usr/bin/env bash\n[[ "$2" == validate ]]\n', newline='\n')
+    python.write_text('''#!/usr/bin/env bash
+if [[ "$2" == validate ]]; then
+  exit 0
+fi
+printf '%s\\n' "$@"
+''', newline='\n')
     python.chmod(0o755)
     sbatch = tmp_path / 'sbatch'
-    sbatch.write_text('#!/usr/bin/env bash\nprintf "%s\\n" "$@"\n', newline='\n')
+    sbatch.write_text('''#!/usr/bin/env bash
+printf '%s\\n' "$@"
+while [[ "$1" == --* ]]; do
+  shift
+done
+[[ $# == 2 && -f "$1" && -d "$2" ]]
+''', newline='\n')
     sbatch.chmod(0o755)
     study = tmp_path / 'study with spaces'
     study.mkdir()
@@ -118,3 +129,17 @@ def test_slurm_submission_requests_four_single_gpu_tasks(tmp_path):
     assert result.rstrip().endswith('/study with spaces')
     single = subprocess.run(launch + ['3'], env=env, capture_output=True, text=True, check=True)
     assert '--array=3' in single.stdout.splitlines()
+
+    for filename, body in (('nvidia-smi', 'exit 0'), ('flock', 'shift 4\nexec "$@"')):
+        stub = tmp_path / filename
+        stub.write_text(f'#!/usr/bin/env bash\n{body}\n', newline='\n')
+        stub.chmod(0o755)
+    for task, model in enumerate(MODELS):
+        launch_worker = [bash, '-c', cmd, 'test', tmp_path.as_posix(), worker.as_posix(), study.as_posix()]
+        run_env = dict(env, SLURM_JOB_ID='1234', SLURM_ARRAY_TASK_ID=str(task))
+        result = subprocess.run(launch_worker, env=run_env, capture_output=True, text=True, check=True)
+        assert result.stdout.splitlines() == [
+            f'job=1234 task={task} model={model}',
+            '-u', 'experiments/run_leadwise_comparison.py', 'run',
+            '--study-dir', study.as_posix(), '--model', model,
+        ]

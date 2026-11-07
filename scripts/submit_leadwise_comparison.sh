@@ -26,4 +26,12 @@ fi
 "$ECG_PYTHON" experiments/run_leadwise_comparison.py validate --study-dir "$study_dir"
 log_dir="${ECG_LOG_DIR:-/data/gykwak03/capstone2/logs}"
 mkdir -p "$log_dir"
-sbatch --parsable --job-name=ecg-leadwise +  --account="${ECG_ACCOUNT:-ugrad_advisor_x}" --qos="${ECG_QOS:-qos_gykwak03_2026_2}" +  --partition="$partition" --gres=gpu:normal:1 --ntasks=1 +  --cpus-per-task="${ECG_CPUS:-4}" --mem="${ECG_MEMORY:-32G}" --time="${hours}:00:00" +  --array="$array" --chdir="$ECG_REPO" --export=ALL +  --output="$log_dir/leadwise-%A_%a.out" --error="$log_dir/leadwise-%A_%a.err" +  "$ECG_REPO/scripts/leadwise_comparison_worker.sh" "$study_dir"
+sbatch_args=(
+  --parsable --job-name=ecg-leadwise
+  --account="${ECG_ACCOUNT:-ugrad_advisor_x}" --qos="${ECG_QOS:-qos_gykwak03_2026_2}"
+  --partition="$partition" --gres=gpu:normal:1 --ntasks=1
+  --cpus-per-task="${ECG_CPUS:-4}" --mem="${ECG_MEMORY:-32G}" --time="${hours}:00:00"
+  --array="$array" --chdir="$ECG_REPO" --export=ALL
+  --output="$log_dir/leadwise-%A_%a.out" --error="$log_dir/leadwise-%A_%a.err"
+)
+sbatch "${sbatch_args[@]}" "$ECG_REPO/scripts/leadwise_comparison_worker.sh" "$study_dir"
