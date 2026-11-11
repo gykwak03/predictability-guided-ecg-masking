@@ -1,0 +1,19 @@
+{
+  "patch_samples": 10,
+  "updates": 3000,
+  "lr_horizon": 3000,
+  "H": 50,
+  "seeds": [42, 43, 44],
+  "methods": ["random", "conditional", "fixed", "curriculum", "coordinate", "reinforce", "spsa", "random_best2"],
+  "targets": 6,
+  "structured_fraction": 0.8,
+  "microbatch": 1,
+  "accumulation": 32,
+  "train_ecgs": 0,
+  "control_ecgs": 128,
+  "balanced_ecgs": 32,
+  "balanced_every": 5,
+  "validation_ecgs": 128,
+  "linear_updates": 1500,
+  "prepare_workers": 4
+}

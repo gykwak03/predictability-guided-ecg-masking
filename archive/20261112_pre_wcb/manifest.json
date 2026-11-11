@@ -1,0 +1,15 @@
+{
+  "remote_main": "0559f93c5d0677bbbd91c9edaf1f5cf736bc5de0",
+  "remote_verified": true,
+  "local_change_paths": [
+    "README.md",
+    "docs/PATCH_AUDIT.md",
+    "experiments/patch_audit.py",
+    "experiments/run_patch_audit.py",
+    "tests/test_patch_audit.py"
+  ],
+  "archives": {
+    "github_main_0559f93.zip": "80a52d253098b643b0fb1cfc041b45a1b5a6ff47e59b8653c8e3513960f54df6",
+    "local_changes_before_wcb.zip": "a421076aae408a9b1d658fbcd4c7829425fb8620ca06fb7a70654ef18e47931a"
+  }
+}

@@ -1,56 +1,31 @@
-# Predictability-guided ECG masking
+# WCB waveform-group masking experiments
 
-현재 연구 단계는 **전처리 확정 → patch/mask pilot → Ridge·CNN·Transformer 난이도 추정기**입니다.
-탐색 backbone은 **확대 Plain ECG-MAE + encoder/decoder 고정 sin/cos 시간 임베딩**으로 정했습니다.
-ST-MEM은 이후 최종 검증 대상으로 남겨둡니다.
+현재 실행 경로는 `experiments/run_wcb.py`와 `experiments/wcb/`입니다.
+40ms 고정 patch를 검출 파형 전체로 묶어 마스킹하며, 기존 Plain MAE와 전체 hidden MSE를 유지합니다.
+W/C/B 세 비율을 독립적으로 조절하고 Coordinate-wise, REINFORCE, SPSA를 초기화부터 비교합니다.
+Random masking warmup과 과거 사전학습 checkpoint 출발은 없습니다.
+
+- [Seraph 전송·환경·제출·재개·평가 명령](docs/WCB_SERAPH.md)
+- [학습 없는 100ms/40ms 파형 묶음 분석](docs/PATCH_AUDIT.md)
+- [메인 설정](configs/wcb_seraph.json)
+- [의존성](configs/wcb_requirements.txt)
+- [기존 GitHub 소스와 로컬 변경분 보관](archive/20261112_pre_wcb/README.md)
 
 ```text
-preprocessing/                  현재 전처리 CLI와 원본 구현 노트북
-experiments/                    재사용할 추정기·실행·시각화 코드
-  phase1/                       새 Phase 1 config/data/mask/model/train/분석 모듈
-  run_phase1.py                  새 실행 진입점
-  artifacts/phase1/             새 결과 namespace (run ID별 분리)
-configs/                        합성 CPU smoke / Seraph config
-scripts/                        Seraph Slurm 제출·worker (Bash LF)
-tests/                          전처리·추정기 검증
-docs/PHASE1_HANDOFF.md           다음 구현에 사용할 범위와 새 참고 경로
-archive/20261028_legacy/         과거 실험 코드·설명서·테스트 원문
+experiments/wcb/          새 마스크·데이터·MAE·학습·평가 모듈
+experiments/run_wcb.py    plan / prepare / profile / run / replay / analyze / test
+configs/wcb_seraph.json   8방법 × 3seed, 40ms, 3000 committed updates
+scripts/submit_wcb.sh     CPU prepare와 GPU profile/run/test Slurm 제출
+scripts/package_wcb.py    데이터·가중치 없이 검증 가능한 전송 묶음 생성
+archive/20261112_pre_wcb/ GitHub main 전체 zip + 로컬 변경 overlay + SHA256
 ```
 
-- [현재 실행 코드 안내](experiments/README.md)
-- [다음 Codex 구현 지침](docs/PHASE1_HANDOFF.md)
-- [과거 코드 찾아보기 및 재실행 주의사항](archive/README.md)
-- [이동 전후 경로와 SHA-256](archive/20261028_legacy/source_manifest.json)
+Random과 Balanced Control Probe는 개별 평가합니다. 메인 정책 보상은 Random LP이며
+Balanced는 기본 5구간마다 및 최종 상태에서 측정합니다. Balanced 보상은 별도 설정으로 실행할 수 있습니다.
+최종 표현 품질은 동결 encoder의 validation linear probe로 측정하며 Test는 별도 명령에서만 엽니다.
 
-새 Phase 1 파이프라인은 `experiments/run_phase1.py`입니다.
-서버에서 단계별로 실행하려면 **[Seraph 튜토리얼](docs/SERAPH_TUTORIAL.md)**과
-`scripts/seraph_phase1_tutorial.sh`를 사용하세요. 이 스크립트는 명시한 단계만 제출합니다.
-**[전처리·모델·지표 및 Windows/Seraph 실행 명령](docs/PHASE1.md)**과
-**[로컬 검증 기록](docs/PHASE1_VALIDATION.md)**을 먼저 읽으세요.
-`plan` / `preflight` / `prepare` / `smoke` / `profile` / `pilot` /
-`estimator-fit` / `estimator-score` / `analyze`를 분리했습니다.
-합성 CPU smoke와 실제 PTB-XL 결과는 명시적으로 구분합니다. 실제 GPU 성능과 최적 patch/ratio는 아직 확정하지 않았습니다.
+기존 `phase1`, backbone, dependency 및 lead-wise 코드와 결과는 보존했습니다.
+새 실험은 해당 실행 경로에 의존하지 않습니다. 보관 zip에서 기존 소스 전체를 재구성할 수 있습니다.
+실제 성능과 GPU 비용은 Seraph 실행 후 판단합니다. 합성 CPU smoke를 실제 ECG 결과로 취급하지 않습니다.
 
-기존 `run_predictability.py`는 과거 40 Hz·global mask 결과 재현용입니다.
-과거 Easy/Medium/Hard 출력은 확정된 학습 정책으로 취급하지 않습니다.
-
-기존 `experiments/artifacts/`, `preprocessing/artifacts/`, `.venv/`와 저장소 밖 데이터·분석 결과는 이동하지 않았습니다.
-과거 설명서의 당시 모델 선택과 명령어는 현재 실행 지침과 구분해서 읽으세요.
-
-검증은 저장소 루트에서 `python -m pytest`로 실행합니다. Torch 등 의존성이 설치된 Python을 사용하세요.
-이 명령은 `tests/`만 수집하고 과거 전체 실험을 실행하지 않습니다.
-
-기존 Random 사전학습 checkpoint로 Within/Cross 추가 학습을 재검증하려면
-[checkpoint 재사용·전체 hidden loss·optimizer 대조 실험](docs/DEPENDENCY_CONTINUATION.md)을 참고하세요.
-`experiments/run_dependency_continuation.py`는 사전학습을 반복하지 않고 새 결과 폴더에서 D/E/F를 비교합니다.
-
-GPU 상향 신청에 사용할 실제 ST-MEM Base 학습 자원 측정은
-[ST-MEM Base 측정·로그·캡처 안내](docs/STMEM_RESOURCE_PROFILE.md)를 참고하세요.
-`scripts/submit_stmem_resource_profile.sh`가 실제 ECG 학습과 1초 간격 GPU 측정을 제출합니다.
-
-ST-MEM Base를 Small·Plain MAE와 같은 P50/r50·3000 updates로 학습하려면
-[ST-MEM Base baseline 실행 안내](docs/STMEM_BASE_BASELINE.md)를 참고하세요.
-`experiments/run_stmem_base_baseline.py`는 Base만 새로 학습하고 동일한 복원 평가·linear probe를 수행합니다.
-
-Plain과 ST-MEM을 Small/Base 각각 같은 파라미터 수로 맞추고, lead별 decoder로
-세 seed에서 복원·linear probe를 비교하려면 [네 모델 비교 실행 안내](docs/LEADWISE_COMPARISON.md)를 참고하세요.
+관련 검사: `python -m pytest tests/test_wcb.py tests/test_patch_audit.py -q`.
