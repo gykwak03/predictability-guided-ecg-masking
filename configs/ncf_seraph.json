@@ -1,0 +1,23 @@
+{
+  "patch_samples": 10,
+  "target_ms": 400,
+  "near_ms": 400,
+  "target_leads": 6,
+  "rate_low": 0.05,
+  "rate_high": 0.95,
+  "probe_rates": [0.2, 0.8],
+  "updates": 3000,
+  "lr_horizon": 3000,
+  "H": 50,
+  "seeds": [42, 43, 44],
+  "methods": ["random", "conditional", "fixed", "random_policy", "coordinate", "reinforce", "spsa", "conditional_best2"],
+  "microbatch": 1,
+  "accumulation": 32,
+  "train_ecgs": 0,
+  "control_ecgs": 128,
+  "balanced_ecgs": 32,
+  "validation_ecgs": 128,
+  "balanced_validation_ecgs": 32,
+  "random_every": 5,
+  "linear_updates": 1500
+}

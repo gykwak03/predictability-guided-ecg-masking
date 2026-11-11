@@ -1,6 +1,24 @@
-# WCB waveform-group masking experiments
+# ECG context masking experiments
 
-현재 실행 경로는 `experiments/run_wcb.py`와 `experiments/wcb/`입니다.
+현재 새 실험 진입점은 **`experiments/run_ncf.py`**입니다.
+**Near(근거리 시간 문맥) / Cross-lead(다른 lead의 동시점 문맥) / Far(원거리 시간 문맥)** 공개율을
+독립적으로 조절합니다. P/QRS/T annotation, R-peak, 주기 추정 없이 400ms 목표와 앞뒤 400ms 문맥을 사용합니다.
+기존 PlainMAE와 전체 hidden patch MSE를 그대로 공유하고, Coordinate-wise / REINFORCE / SPSA를
+처음부터 비교합니다. 정책 보상은 8조건 Context-Balanced Probe의 전체 hidden MSE learning progress이며,
+Random Probe와 validation Probe는 별도로 보고합니다.
+
+- [NCF 설계·파일 순서·Git·sbatch 실행 안내](docs/NCF_SERAPH.md)
+- [NCF 메인 설정](configs/ncf_seraph.json)
+- [NCF 의존성 — NeuroKit2 불필요](configs/ncf_requirements.txt)
+- [NCF 검사](tests/test_ncf.py)
+
+서버에서 `bash scripts/start_ncf.sh`는 새 plan, CPU prepare, GPU profile까지 제출합니다.
+기존 annotation 기반 study와 다른 study/checkout에서 실행합니다. 두 실행 경로는 서로의 checkpoint를 사용하지 않습니다.
+소프트웨어 검증과 실제 ECG/GPU 성능은 구분합니다.
+
+## 이전 WCB 파형 묶음 실험
+
+기존 파형 묶음 실행 경로는 `experiments/run_wcb.py`와 `experiments/wcb/`입니다.
 40ms 고정 patch를 검출 파형 전체로 묶어 마스킹하며, 기존 Plain MAE와 전체 hidden MSE를 유지합니다.
 W/C/B 세 비율을 독립적으로 조절하고 Coordinate-wise, REINFORCE, SPSA를 초기화부터 비교합니다.
 Random masking warmup과 과거 사전학습 checkpoint 출발은 없습니다.
